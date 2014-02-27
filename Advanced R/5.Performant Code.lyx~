@@ -1,0 +1,5666 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\date{}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=blue,
+    urlcolor=blue
+}
+\end_preamble
+\options liststotoc
+\use_default_options true
+\begin_modules
+knitr
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5cm
+\topmargin 3cm
+\rightmargin 2.5cm
+\bottommargin 3.5cm
+\headheight 1cm
+\headsep 1cm
+\footskip 2cm
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation indent
+\paragraph_indentation 0bp
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\bullet 0 0 27 -1
+\bullet 1 0 15 -1
+\bullet 2 0 24 -1
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{section}{4}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Performant Code
+\end_layout
+
+\begin_layout Subsection
+Performance
+\end_layout
+
+\begin_layout Subsubsection
+Introduction
+\end_layout
+
+\begin_layout Itemize
+R is not a fast computer language.
+ This is not an accident: R has been thoughtfully designed to make it easier
+ for you to solve data analysis and statistics challenges, not to make your
+ computer's life easier.
+\end_layout
+
+\begin_layout Subsubsection
+Why is R slow?
+\end_layout
+
+\begin_layout Itemize
+To understand R's performance it helps to think about R in two ways: as
+ a 
+\bar under
+language
+\bar default
+ and an
+\bar under
+ implementation
+\bar default
+.
+\end_layout
+
+\begin_layout Itemize
+The R-language is abstract.
+ It defines what R code means and how it should work.
+\end_layout
+
+\begin_layout Itemize
+An implementation is concrete: you give it R code and it computes the result.
+\end_layout
+
+\begin_layout Itemize
+R has the R language definition, but it is informal and incomplete: the
+ R-language is mostly defined in terms of how GNU-R works.
+\end_layout
+
+\begin_layout Itemize
+Even though the distinction between R-language and GNU-R isn't clear cut,
+ it's still useful because poor performance due to the implementation can
+ be fixed relatively easily, while poor performance related to the language
+ is hard to fix without changing what R code means.
+\end_layout
+
+\begin_layout Itemize
+While language design constrains the maximum possible performance, GNU-R
+ is currently far from the optimum.
+\end_layout
+
+\begin_layout Itemize
+As well as performance limitations imposed by the language design and current
+ implementation, a lot of R code is slow because it's poorly written.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Microbenchmarking
+\end_layout
+
+\begin_layout Itemize
+A 
+\series bold
+microbenchmark
+\series default
+ is a performance measurement of a very small piece of code, something that
+ might take microseconds (µs) or nanoseconds (ns) to run.
+\end_layout
+
+\begin_layout Itemize
+the small times in microbenchmarks are typically dominated by higher-order
+ effects in real code.
+ Don't change the way you code because of these microbenchmarks; instead
+ wait until the next chapter to see how to improve the performance of real
+ code.
+\end_layout
+
+\begin_layout Itemize
+The best tool for microbenchmarking in R is the 
+\series bold
+microbenchmark
+\series default
+ package.
+ It provides very precise timings and makes it possible to compare operations
+ that only take a tiny amount of time.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(microbenchmark)
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- runif(100)
+\end_layout
+
+\begin_layout Plain Layout
+
+microbenchmark(
+\end_layout
+
+\begin_layout Plain Layout
+
+sqrt(x),
+\end_layout
+
+\begin_layout Plain Layout
+
+x ^ 0.5
+\end_layout
+
+\begin_layout Plain Layout
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+To help calibrate the impact of a microbenchmark on run time, it's useful
+ to think about how many times a function needs to run before it takes a
+ second.
+ If a microbenchmark takes:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+1 ms, then one thousand calls takes a second 
+\end_layout
+
+\begin_layout Itemize
+1 µs, then one million calls takes a second 
+\end_layout
+
+\begin_layout Itemize
+1 ns, then one billion calls takes a second 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family sans
+microbenchmark()
+\family default
+ takes multiple expressions as input, and displays summaries of the distribution
+ of times.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Language performance
+\end_layout
+
+\begin_layout Itemize
+You can't benchmark a language, since it's an abstract construct, so the
+ benchmarks are only suggestive of the cost of these decisions to the language,
+ but are nevertheless useful.
+ 
+\end_layout
+
+\begin_layout Itemize
+Designing a useful language is a delicate balancing act.
+ There are many options and many tradeoffs, and you need to balance between
+ speed, flexibility and ease of implementation.
+\end_layout
+
+\begin_layout Itemize
+If you'd like to learn more about the performance characteristics of the
+ R-language and how they affect real code, I highly recommend
+\emph on
+ Evaluating the Design of the R Language
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+
+\emph on
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://www.cs.purdue.edu/homes/jv/pubs/ecoop12.pdf
+\end_layout
+
+\end_inset
+
+
+\emph default
+ It discusses a powerful methodology for understanding the performance character
+istics of GNU-R using a modified R interpreter and a wide set of code found
+ in the wild.
+\end_layout
+
+\end_inset
+
+
+\emph default
+ by Floreal Morandat, Brandon Hill, Leo Osvald and Jan Vitek.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Extreme dynamism
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+R is an extremely dynamic programming language, and almost anything can
+ be modified after it is created.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+change the body, arguments and environment of functions 
+\end_layout
+
+\begin_layout Itemize
+change the S4 methods for a generic 
+\end_layout
+
+\begin_layout Itemize
+add new fields to an S3 object, or even change its class 
+\end_layout
+
+\begin_layout Itemize
+modify objects outside of the local environment with <<-
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Pretty much the only thing you can't change are objects in sealed namespaces.
+ After a package is loaded its namespace is sealed and it is harder (although
+ still not impossible) to change objects defined by the package.
+\end_layout
+
+\begin_layout Itemize
+The advantage of dynamism is that you don't need to do upfront planning,
+ and you don't need an initial compilation step.
+ You can change your mind at any point, iterating you way to a solution
+ without having to start afresh.
+\end_layout
+
+\begin_layout Itemize
+The disadvantage of dynamism is that it makes it difficult to predict exactly
+ what will happen for a given function call.
+ 
+\end_layout
+
+\begin_layout Itemize
+If an interpreter can't predict what's going to happen, it has to look through
+ many options to find the right one, a slow operation.
+\end_layout
+
+\begin_layout Itemize
+For example, code like the following loop is slow in R, because R can't
+ know that the type of x never changes.
+ That means R has to look for the right + method (e.g.
+ is it adding doubles, or integers) in every iteration of the loop.
+ The cost of finding the right method is higher for non-primitive functions.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- 0L
+\end_layout
+
+\begin_layout Plain Layout
+
+for (i in 1:1e6) {
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- x + 1
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+The following microbenchmark illustrates the cost of method dispatch for
+ S3, S4, and RC.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+f <- function(x) NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+s3 <- function(x) UseMethod("s3")
+\end_layout
+
+\begin_layout Plain Layout
+
+s3.integer <- f
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+A <- setClass("A", representation(a = "list"))
+\end_layout
+
+\begin_layout Plain Layout
+
+setGeneric("s4", function(x) standardGeneric("s4"))
+\end_layout
+
+\begin_layout Plain Layout
+
+setMethod(s4, "A", f)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+B <- setRefClass("B", methods = list(rc = f))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+a <- A()
+\end_layout
+
+\begin_layout Plain Layout
+
+b <- B$new()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+microbenchmark(
+\end_layout
+
+\begin_layout Plain Layout
+
+fun = f(),
+\end_layout
+
+\begin_layout Plain Layout
+
+S3 = s3(1L),
+\end_layout
+
+\begin_layout Plain Layout
+
+S4 = s4(a),
+\end_layout
+
+\begin_layout Plain Layout
+
+RC = b$rc()
+\end_layout
+
+\begin_layout Plain Layout
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+#> Unit: nanoseconds 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>  expr    min     lq median     uq       max neval 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>   fun    432    595    662    762     1,340   100 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>    S3  5,390  6,000  6,550  6,820    40,300   100 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>    S4 26,700 28,100 28,900 29,700   109,000   100 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>    RC 30,000 31,300 32,100 33,000 1,150,000   100
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+the function call takes about 280 ns.
+ S3 method dispatch takes an additional 3,000 ns; S4 dispatch, 13,000 ns;
+ and RC dispatch, 11,000 ns.
+ S3 and S4 method dispatch is so expensive because R must search for the
+ right method every time the generic is called; it might have changed between
+ this call and the last.
+\end_layout
+
+\begin_layout Itemize
+R could do better by caching methods between calls, but caching is hard
+ to do correctly and a notorious source of bugs.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Name lookup with mutable environments
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+It's surprisingly difficult to find the value associated with a name in
+ the R-language because of the combination of lexical scoping and extreme
+ dynamism.
+\end_layout
+
+\begin_layout Itemize
+Take the following example.
+ Each time we print a it comes from a different environment:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+a <- 1
+\end_layout
+
+\begin_layout Plain Layout
+
+f <- function() {
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- function() {
+\end_layout
+
+\begin_layout Plain Layout
+
+print(a)
+\end_layout
+
+\begin_layout Plain Layout
+
+assign("a", 2, envir = parent.frame())
+\end_layout
+
+\begin_layout Plain Layout
+
+print(a)
+\end_layout
+
+\begin_layout Plain Layout
+
+a <- 3
+\end_layout
+
+\begin_layout Plain Layout
+
+print(a)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+g()
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+f()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+This means that you can't rely on the binding associated with a name being
+ in the same place as it was last time you looked: you have to start from
+ scratch each time.
+ 
+\end_layout
+
+\begin_layout Itemize
+Since many basic functions are in the base environment, R has to look through
+ every environment on the search path, which could easily be 10 or 20 environmen
+ts.
+\end_layout
+
+\begin_layout Itemize
+The following microbenchmark hints at the performance costs.
+ We create four versions of f(), each with one more environment (containing
+ 26 bindings) between the environment of f() and the base environment where
+ +, ^, (, and { are defined.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+random_env <- function(parent = globalenv()) {
+\end_layout
+
+\begin_layout Plain Layout
+
+letter_list <- setNames(as.list(runif(26)), LETTERS)
+\end_layout
+
+\begin_layout Plain Layout
+
+list2env(letter_list, envir = new.env(parent = parent)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+set_env <- function(f, e) {   
+\end_layout
+
+\begin_layout Plain Layout
+
+environment(f) <- e   
+\end_layout
+
+\begin_layout Plain Layout
+
+f 
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\begin_layout Plain Layout
+
+f2 <- set_env(f, random_env()) 
+\end_layout
+
+\begin_layout Plain Layout
+
+f3 <- set_env(f, random_env(environment(f2))) 
+\end_layout
+
+\begin_layout Plain Layout
+
+f4 <- set_env(f, random_env(environment(f3)))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+microbenchmark(   
+\end_layout
+
+\begin_layout Plain Layout
+
+f(1, 2),   
+\end_layout
+
+\begin_layout Plain Layout
+
+f2(1, 2),   
+\end_layout
+
+\begin_layout Plain Layout
+
+f3(1, 2),   
+\end_layout
+
+\begin_layout Plain Layout
+
+f4(1, 2),   
+\end_layout
+
+\begin_layout Plain Layout
+
+times = 1000 
+\end_layout
+
+\begin_layout Plain Layout
+
+) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#> Unit: nanoseconds 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>      expr   min    lq median    uq    max neval 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>   f(1, 2) 2,500 3,250  3,370 3,520 45,400  1000 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>  f2(1, 2) 1,770 2,430  2,540 2,680 14,800  1000 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>  f3(1, 2) 1,930 2,550  2,660 2,770 10,600  1000 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>  f4(1, 2) 2,030 2,690  2,810 2,940 11,900  1000
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Each additional environment between 
+\family sans
+f()
+\family default
+ and the base environment makes the function slower by about 50ns.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+It might be possible to implement a caching system so that R only needs
+ to look up the value of each name once.
+ This is hard because there are so many ways to change the value associated
+ with a name: 
+\family sans
+<<-, assign(), eval()
+\family default
+, ...
+ 
+\end_layout
+
+\begin_layout Itemize
+Any caching system would have to connect to each of these tools to make
+ sure the cache was correctly invalidated and you didn't get an old (incorrect)
+ value.
+\end_layout
+
+\begin_layout Itemize
+Another simple fix would be to add more built in constants that you can't
+ override.
+ This, for example, would mean that you always know exactly what +, -, {
+ and ( mean, and you don't need to repeatedly look up their definitions.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Lazy evaluation overhead
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+In R, functions arguments are evaluated lazily (as discussed in lazy evaluation
+ and capturing expressions).
+\end_layout
+
+\begin_layout Itemize
+To implement lazy evaluation, R uses a promise object that contains the
+ expression needed to compute the result, and the environment in which to
+ perform the computation.
+ 
+\end_layout
+
+\begin_layout Itemize
+Creating these objects has some overhead, so 
+\family sans
+every
+\family default
+ additional argument to an R function slows it down a little.
+\end_layout
+
+\begin_layout Itemize
+The following microbenchmark compares the run time of a very simple function.
+ Each version of the function has one extra argument.
+ This suggests that each additional argument slows the function down by
+ 20 ns.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+f0 <- function() NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+f1 <- function(a = 1) NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+f2 <- function(a = 1, b = 1) NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+f3 <- function(a = 1, b = 2, c = 3) NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+f4 <- function(a = 1, b = 2, c = 4, d = 4) NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+f5 <- function(a = 1, b = 2, c = 4, d = 4, e = 5) NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+microbenchmark(f0(), f1(), f2(), f3(), f4(), f5(), times = 1000)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+In most other programming languages there is little overhead for adding
+ extra arguments.
+ Many compiled languages will even warn you if arguments are never used
+ (like in the above example), and automatically remove them from the function.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Implementation performance
+\end_layout
+
+\begin_layout Itemize
+The design of R-language limits its maximum theoretical performance.
+ But GNU-R is currently nowhere close to that maximum, and there are many
+ things that can (and will) be done to speed it up.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Extracting a single value from a data frame
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The following microbenchmark shows seven ways to access a single value (the
+ number in the bottom-right corner) from the built-in mtcars dataset.
+ 
+\end_layout
+
+\begin_layout Itemize
+The variation in performance is startling: 
+\end_layout
+
+\begin_layout Itemize
+There's no reason for there to be such a huge difference in performance,
+ but no one has spent the time to make the slowest methods faster.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+microbenchmark(
+\end_layout
+
+\begin_layout Plain Layout
+
+mtcars[32, 11],
+\end_layout
+
+\begin_layout Plain Layout
+
+mtcars[[c(11,32)]],
+\end_layout
+
+\begin_layout Plain Layout
+
+mtcars[[11]][32],
+\end_layout
+
+\begin_layout Plain Layout
+
+mtcars$carb[32]
+\end_layout
+
+\begin_layout Plain Layout
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family sans
+ifelse(), pmin(),
+\family default
+ and 
+\family sans
+pmax()
+\family default
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+the following three implementations of a function to 
+\family sans
+squish()
+\family default
+ a vector to ensure that the smallest value is at least a and the largest
+ value is at most b.
+\end_layout
+
+\begin_layout Itemize
+
+\family sans
+squish_ife()
+\family default
+ uses 
+\family sans
+ifelse()
+\family default
+.
+ 
+\family sans
+ifelse()
+\family default
+ is known to be slow because it is relatively general, and must evaluate
+ all arguments fully.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\family sans
+squish_p()
+\family default
+, uses
+\family sans
+ pmin()
+\family default
+ and 
+\family sans
+pmax()
+\family default
+ which should be much faster because they're so specialised.
+ But they're actually rather slow because they can take any number of arguments
+ and have to do some relatively complicated checks to determine which method
+ to use.
+ 
+\end_layout
+
+\begin_layout Itemize
+The final implementation uses basic subassignment.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+squish_ife <- function(x, a, b) {
+\end_layout
+
+\begin_layout Plain Layout
+
+ifelse(x <= a, a, ifelse(x >= b, b, x))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+squish_p <- function(x, a, b) {
+\end_layout
+
+\begin_layout Plain Layout
+
+pmax(pmin(x, b), a)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+squish_in_place <- function(x, a, b) {
+\end_layout
+
+\begin_layout Plain Layout
+
+x[x <= a] <- a
+\end_layout
+
+\begin_layout Plain Layout
+
+x[x >= b] <- b
+\end_layout
+
+\begin_layout Plain Layout
+
+x
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- runif(100, -1.5, 1.5)
+\end_layout
+
+\begin_layout Plain Layout
+
+microbenchmark(
+\end_layout
+
+\begin_layout Plain Layout
+
+squish_ife(x, -1, 1),
+\end_layout
+
+\begin_layout Plain Layout
+
+squish_p(x, -1, 1),
+\end_layout
+
+\begin_layout Plain Layout
+
+squish_in_place(x, -1, 1)
+\end_layout
+
+\begin_layout Plain Layout
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+There's quite a variation in speed: using 
+\family sans
+pmin()
+\family default
+ and 
+\family sans
+pmax()
+\family default
+ is about 3x faster than using 
+\family sans
+ifelse()
+\family default
+, and using subsetting directly is about twice as fast again.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+#include <Rcpp.h>
+\end_layout
+
+\begin_layout Plain Layout
+
+using namespace Rcpp;
+\end_layout
+
+\begin_layout Plain Layout
+
+// [[Rcpp::export]]
+\end_layout
+
+\begin_layout Plain Layout
+
+NumericVector squish_cpp(NumericVector x, double a, double b) {
+\end_layout
+
+\begin_layout Plain Layout
+
+int n = x.length();
+\end_layout
+
+\begin_layout Plain Layout
+
+NumericVector out(n);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+for (int i = 0; i < n; ++i) {
+\end_layout
+
+\begin_layout Plain Layout
+
+double xi = x[i];
+\end_layout
+
+\begin_layout Plain Layout
+
+if (xi < a) {
+\end_layout
+
+\begin_layout Plain Layout
+
+out[i] = a;
+\end_layout
+
+\begin_layout Plain Layout
+
+} else if (xi > b) {
+\end_layout
+
+\begin_layout Plain Layout
+
+out[i] = b;
+\end_layout
+
+\begin_layout Plain Layout
+
+} else {
+\end_layout
+
+\begin_layout Plain Layout
+
+out[i] = xi;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+return out;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+microbenchmark(
+\end_layout
+
+\begin_layout Plain Layout
+
+squish_in_place(x, -1, 1),
+\end_layout
+
+\begin_layout Plain Layout
+
+squish_cpp(x, -1, 1)
+\end_layout
+
+\begin_layout Plain Layout
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Alternative R implementations
+\end_layout
+
+\begin_layout Itemize
+The four most mature open-source projects are: (These are roughly ordered
+ in from most practical to most ambitious.
+ )
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+pqR
+\series default
+ (pretty quick R), by Radford Neal.
+ It's built on top of the existing R code base (2.15.0), and fixes many obvious
+ performance issues.
+ It provides better memory management, and some support for automatic multithrea
+ding.
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.pqr-project.org
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Renjin
+\series default
+ by BeDataDriven.
+ Renjin uses the java virtual machine, and has an extensive test suite.
+ 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.renjin.org/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+fastr,
+\series default
+ by a team from Purdue.
+ fastr is similar to Renjin, but it makes more ambitious optimisations and
+ is somewhat less mature.
+ 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/allr/fastr
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Riposte
+\series default
+, by Justin Talbot and Zachary DeVito.
+ Riposte is experimental and ambitious, and for the parts of R it implements
+ is extremely fast.
+ Riposte is described in more detail in Riposte: A Trace-Driven Compiler
+ and Parallel VM for Vector Code in R.
+ 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/jtalbot/riposte
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+However, even if these implementations never make a dent in the use of GNU-R,
+ they have other benefits:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Simpler implementations make it easy to validate new approaches before porting
+ to GNU-R.
+\end_layout
+
+\begin_layout Itemize
+Gain understanding about which aspects of language could be changed with
+ minimal impact to existing code and maximal impact on performance.
+\end_layout
+
+\begin_layout Itemize
+Alternative implementations put pressure on the R-core to incorporate performanc
+e improvements.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+One of the most important approaches that pqR, renjin, fastR and riposte
+ are exploring is the idea of deferred evaluation.
+\end_layout
+
+\begin_layout Itemize
+As Justin Talbot, the author of riposte, points out "for long vectors, R's
+ execution is 
+\bar under
+completely memory bound
+\bar default
+.
+ It spends almost all of its time reading and writing vector intermediates
+ to memory".
+ If you can eliminate intermediate vectors, you can not only decrease memory
+ usage, you can also considerably improve performance.
+\end_layout
+
+\begin_layout Itemize
+The following example shows a very simple example of where deferred evaluation
+ might help.
+ We have three vectors, x, y, z each containing 1 million elements, and
+ we want to find the sum of x + y where z is TRUE.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- runif(1e6)
+\end_layout
+
+\begin_layout Plain Layout
+
+y <- runif(1e6)
+\end_layout
+
+\begin_layout Plain Layout
+
+z <- sample(c(T, F), 1e6, rep = TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+#sum((x + y)[z])
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+In R, this creates two big temporary vectors: 
+\family sans
+x + y
+\family default
+, 1 million elements long, and 
+\family sans
+(x + y)[z]
+\family default
+, about 500,000 elements long.
+ This means you need to have extra memory free for the intermediate calculation,
+ and you have to shuttle the data back and forth between the CPU and memory.
+ This slows computation down because the CPU can't work at maximum efficiency
+ if it's always waiting for more data to come in.
+\end_layout
+
+\begin_layout Itemize
+If we rewrote the function using a loop in a language like C++, we could
+ recognise that we only need one intermediate value: the sum of all the
+ values we've seen:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+#include <Rcpp.h>
+\end_layout
+
+\begin_layout Plain Layout
+
+using namespace Rcpp;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// [[Rcpp::export]] double cond_sum_cpp(NumericVector x, NumericVector y,
+ LogicalVector z) {
+\end_layout
+
+\begin_layout Plain Layout
+
+double sum = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+int n = x.length();
+\end_layout
+
+\begin_layout Plain Layout
+
+  for(int i = 0; i < n; i++) {
+\end_layout
+
+\begin_layout Plain Layout
+
+if (!z[i]) continue;
+\end_layout
+
+\begin_layout Plain Layout
+
+sum += x[i] + y[i];
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+  return sum;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+cond_sum_r <- function(x, y, z) {
+\end_layout
+
+\begin_layout Plain Layout
+
+sum((x + y)[z])
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+microbenchmark(
+\end_layout
+
+\begin_layout Plain Layout
+
+cond_sum_cpp(x, y, z),
+\end_layout
+
+\begin_layout Plain Layout
+
+cond_sum_r(x, y, z),
+\end_layout
+
+\begin_layout Plain Layout
+
+unit = "ms" ) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#> Unit: milliseconds 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>                   expr  min    lq median    uq  max neval 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>  cond_sum_cpp(x, y, z)  7.5  7.76   7.97  8.53 10.4   100 
+\end_layout
+
+\begin_layout Plain Layout
+
+#>    cond_sum_r(x, y, z) 30.7 31.80  32.70 34.40 89.0   100
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+The goal of deferred evaluation is to perform this transformation automatically,
+ so you can write concise R code and have it automatically translated into
+ efficient machine code.
+\end_layout
+
+\begin_layout Subsection
+Profiling
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+"We should forget about small efficiencies, say about 97% of the time: premature
+ optimization is the root of all evil" --- Donald Knuth.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Your code should be correct, maintainable and fast.
+ Notice that speed comes last - if your function is incorrect or unmaintainable
+ (i.e.
+ will eventually become incorrect) it doesn't matter if it's fast.
+\end_layout
+
+\begin_layout Itemize
+This often means vectorising code, or avoiding some of the most obvious
+ traps discussed in the [R inferno]
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.burns-stat.com/documents/books/the-r-inferno/
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+Making fast code is a four part process:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\series bold
+Profiling
+\series default
+ helps you discover which parts of your code are taking up the most time.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Microbenchmarking
+\series default
+ lets you experiment with small parts of your code to find faster approaches.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Timing
+\series default
+ helps you check that the micro-optimisations have a macro effect, and helps
+ experiment with larger changes (like totally rethinking your approach)
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+A performance testing tool
+\series default
+ makes sure your code stays fast in the future (e.g.
+ Vbench, 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://wesmckinney.com/blog/?p=373
+\end_layout
+
+\end_inset
+
+)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Sometimes there's no way to improve performance within R, and you'll need
+ to use C++, the topic of Rcpp.
+\end_layout
+
+\begin_layout Itemize
+Having a good test suite is important when tuning the performance of your
+ code: you don't want to make your code fast at the expense of making it
+ incorrect.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Good exploration from Winston: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://rpubs.com/wch/3797
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Find out what is slow.
+ Then make it fast.
+\end_layout
+
+\begin_layout Itemize
+Mature optimisation (PDF) 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://carlos.bueno.org/optimization/mature-optimization.pdf
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+A recurring theme throughout this part of the book is the importance of
+ differentiating between absolute and relative speed, and fast vs fast enough.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+First, whenever you compare the speed of two approaches to a problem, be
+ very wary of just looking at a relative differences.
+\end_layout
+
+\begin_layout Itemize
+You also need to think about the costs of modifying your code.
+ For example, if it takes you an hour to implement a change that makes you
+ code 10x faster, saving 9 s each run, then you'll have to run at least
+ 400 times before you'll see a net benefit.
+\end_layout
+
+\begin_layout Itemize
+Be careful that you don't spend hours to save seconds.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Performance profiling
+\end_layout
+
+\begin_layout Subsubsection
+Timing
+\end_layout
+
+\begin_layout Subsubsection
+Performance testing
+\end_layout
+
+\begin_layout Subsubsection
+Caching
+\end_layout
+
+\begin_layout Subsubsection
+Byte code compilation
+\end_layout
+
+\begin_layout Subsubsection
+Other people's code
+\end_layout
+
+\begin_layout Subsubsection
+Rewrite in a lower-level language
+\end_layout
+
+\begin_layout Subsubsection
+Brainstorming
+\end_layout
+
+\begin_layout Subsection
+Memory
+\end_layout
+
+\begin_layout Itemize
+Understanding how memory works in R can not only help you analyse larger
+ datasets with the same amount of memory, but is also important for writing
+ fast code, as accidental copies are a major cause of slow code.
+\end_layout
+
+\begin_layout Itemize
+Places to learn memory management in R
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+reading of the documentation (particularly ?Memory and ?gc)
+\end_layout
+
+\begin_layout Itemize
+the memory profiling section of R-exts (
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://cran.r-project.org/doc/manuals/R-exts.html#Profiling-R-code-for-memory-use
+\end_layout
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+the SEXPs section of R-ints.
+ (
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://cran.r-project.org/doc/manuals/R-ints.html#SEXPs
+\end_layout
+
+\end_inset
+
+)
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+object.size()
+\end_layout
+
+\begin_layout Itemize
+One of the most useful tools for understanding memory usage in R is 
+\family sans
+object.size()
+\family default
+, which tells you how much memory an object occupies.
+ 
+\end_layout
+
+\begin_layout Itemize
+You might have expected that the size of an empty vector would be 0 and
+ that the memory usage would grow proportionately with length.
+ Neither of those things are true!
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<out.width="0.5
+\backslash
+
+\backslash
+maxwidth">>=
+\end_layout
+
+\begin_layout Plain Layout
+
+sizes <- sapply(0:50,function(n) object.size(seq_len(n)))
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(0:50,sizes,xlab="Length",ylab="Bytes",type="s")
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+This isn't just an artefact of integer vectors: every vector of length 0
+ occupies 40 bytes of memory:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+object.size(numeric())
+\end_layout
+
+\begin_layout Plain Layout
+
+object.size(logical())
+\end_layout
+
+\begin_layout Plain Layout
+
+object.size(raw())
+\end_layout
+
+\begin_layout Plain Layout
+
+object.size(list())
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+What are those 40 bytes of memory used for? Every object in R has four component
+s:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+object metadata
+\series default
+, the 
+\emph on
+sxpinfo
+\emph default
+ (4 bytes).
+ This metadata includes the base type, and information used for debugging
+ and memory management.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Two pointers
+\series default
+: one to the next object in memory, and one to the previous object (2 *
+ 8 bytes).
+ This doubly-linked list makes it easy for internal R code to loop iterate
+ through every object in memory.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+A pointer to the attributes
+\series default
+ (8 bytes).
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+All vector types (e.g.
+ atomic vectors and lists), have three more components:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+The length of the vector
+\series default
+ (4 bytes).
+ Using 4 bytes should mean that R can only support vectors up to 2 ^ (4
+ * 8 - 1) (2 ^ 31, about two billion) elements long.
+ But in R 3.0.0 and later you can have vectors up to 2 ^ 52 long: read R-internals
+ to see how support for long vectors was added without changing the size
+ of this field.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+The "true" length of the vector
+\series default
+ (4 bytes).
+ This is basically never used, except when the object is the hash table
+ for an environment, where the truelength represents the allocated space
+ and the length represents the space currenty used.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+The data
+\series default
+ (?? bytes).
+ An empty vector has 0 bytes of data, but it's obviously very important
+ otherwise!
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If you're counting closely you'll note that only this adds up to 36 bytes.
+ The other 4 bytes are needed as padding after the sxpinfo, so that the
+ pointers start on 8 byte (=64-bit) boundaries.
+\end_layout
+
+\begin_layout Itemize
+Most process architectures require this alignment for pointers, and even
+ if not required, accessing non-aligned pointers tends to be rather slow.
+ (If you're interested, you can read more about C structure package
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.catb.org/esr/structure-packing/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.)
+\end_layout
+
+\begin_layout Itemize
+That explains the intercept on the graph.
+\end_layout
+
+\begin_layout Itemize
+But why does the memory size grow in irregular jumps? To understand that,
+ you need to know a little bit about how R requests memory from the operating
+ system.
+ 
+\end_layout
+
+\begin_layout Itemize
+Requesting memory, using the 
+\family sans
+malloc()
+\family default
+ function, is a relatively expensive operation, and it would make R slow
+ if it had to request memory every time you created a little vector.
+\end_layout
+
+\begin_layout Itemize
+Instead, it asks for a big block of memory and then manages it itself: this
+ is called the 
+\series bold
+\bar under
+small vector pool
+\series default
+\bar default
+.
+\end_layout
+
+\begin_layout Itemize
+R uses this pool for vectors less than 128 bytes long, and for efficiency
+ and simplicity, it only allocates vectors that are 8, 16, 32, 48, 64 or
+ 128 bytes long.
+\end_layout
+
+\begin_layout Itemize
+If we adjust our previous plot by removing the 40 bytes of overhead we can
+ see that those values correspond to the jumps.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<out.width="0.8
+\backslash
+
+\backslash
+maxwidth">>=
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(0:50, sizes - 40, xlab = "Length", ylab = "Bytes excluding overhead",
+ type = "n")
+\end_layout
+
+\begin_layout Plain Layout
+
+abline(h = 0, col = "grey80")
+\end_layout
+
+\begin_layout Plain Layout
+
+abline(h = c(8, 16, 32, 48, 64, 128), col = "grey80")
+\end_layout
+
+\begin_layout Plain Layout
+
+abline(a = 0, b = 4, col = "grey90", lwd = 4)
+\end_layout
+
+\begin_layout Plain Layout
+
+lines(sizes - 40, type = "s")
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+It only remains to explain the steps after 128 bytes.
+ While it makes sense for R to manage memory for small vectors, it doesn't
+ make sense to manage it for large vectors: allocating big chunks of memory
+ is something that operating systems are very good at.
+ 
+\end_layout
+
+\begin_layout Itemize
+R always asks for memory in 
+\bar under
+multiples of 8 bytes
+\bar default
+: this ensures good alignment for the data, in the same way we needed good
+ alignment for the pointers.
+\end_layout
+
+\begin_layout Itemize
+There are a few other subtleties to 
+\family sans
+object.size()
+\family default
+: it only promises to give an estimate of the memory usage, not the actual
+ usage.
+\end_layout
+
+\begin_layout Itemize
+This is because for more complex objects it's not immediately obvious what
+ memory usage means.
+ 
+\end_layout
+
+\begin_layout Itemize
+Take environments for example.
+ Using 
+\family sans
+object.size()
+\family default
+ on an environment tells you the size of the environment, not the size of
+ its contents.
+ 
+\end_layout
+
+\begin_layout Itemize
+It would be easy to create a function that did this:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+env_size <- function(x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+if (!is.environment(x)) return(object.size(x))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+objs <- ls(x, all = TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+sizes <- vapply(objs, function(o) env_size(get(o, x)), double(1))
+\end_layout
+
+\begin_layout Plain Layout
+
+structure(sum(sizes) + object.size(x), class = "object_size")
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+object.size(environment())
+\end_layout
+
+\begin_layout Plain Layout
+
+env_size(environment())
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+This function isn't quite correct because it's very difficult to cover every
+ special case.
+ For example, you might have an object with an attribute that's an environment
+ that contains a formula which has an environment containing a large object...
+\end_layout
+
+\begin_layout Itemize
+But even if you could cover all these special cases there's another problem.
+ Environment objects are reference based so you can point to the same object
+ from multiple locations.
+ 
+\end_layout
+
+\begin_layout Itemize
+For example, In the following example, what should the size of b be?
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+a <- new.env()
+\end_layout
+
+\begin_layout Plain Layout
+
+a$x <- 1:1e6
+\end_layout
+
+\begin_layout Plain Layout
+
+b <- new.env()
+\end_layout
+
+\begin_layout Plain Layout
+
+b$a <- a
+\end_layout
+
+\begin_layout Plain Layout
+
+env_size(a)
+\end_layout
+
+\begin_layout Plain Layout
+
+env_size(b)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You could argue that the size of b is actually only 56 bytes, because if
+ you remove b, that's how much memory will be freed.
+ But if you deleted a first, and then deleted b it would free 4000152 bytes.
+ So is the size of b 56 or 4000152 bytes? The answer depends on the context.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Another challenge for 
+\family sans
+object.size()
+\family default
+ is strings:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+object.size("banana")
+\end_layout
+
+\begin_layout Plain Layout
+
+object.size(rep("banana",100))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+the size of a vector containing "banana" is 96 bytes, but the size of a
+ vector containing 100 "banana"s is 888 bytes.
+ Why the difference? The key is 888 = 96 + 99 * 8.
+\end_layout
+
+\begin_layout Itemize
+R has a global string pool, which means that every unique string is only
+ stored once in memory.
+ Every other instance of that string is just a pointer, and only needs 8
+ bytes of storage.
+\end_layout
+
+\begin_layout Itemize
+
+\family sans
+object.size()
+\family default
+ does tries to take this into account for individual vectors, but like with
+ environments it's not obvious exactly how the accounting should work.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Total memory use
+\end_layout
+
+\begin_layout Itemize
+
+\family sans
+object.size()
+\family default
+ tells you the size of a single object; 
+\family sans
+gc()
+\family default
+ (among other things) tells you the total size of all objects in memory:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+gc()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+R breaks down memory usage into 
+\series bold
+Vcells
+\series default
+ (memory used by vectors) and 
+\series bold
+Ncells
+\series default
+ (memory used by everything else).
+\end_layout
+
+\begin_layout Itemize
+But this distinction isn't usually important, and neither are the gc trigger
+ and max used columns.
+ What you're usually most interested in is the total memory used.
+\end_layout
+
+\begin_layout Itemize
+The function below wraps around gc() to return just the amount of memory
+ (in megabytes) that R is currently using.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+rm(list=ls())
+\end_layout
+
+\begin_layout Plain Layout
+
+mem <- function() {
+\end_layout
+
+\begin_layout Plain Layout
+
+bit <- 8L * .Machine$sizeof.pointer
+\end_layout
+
+\begin_layout Plain Layout
+
+if (!(bit == 32L || bit == 64L)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+stop("Unknown architecture", call.
+ = FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+node_size <- if (bit == 32L) 28L else 56L
+\end_layout
+
+\begin_layout Plain Layout
+
+usage <- gc()
+\end_layout
+
+\begin_layout Plain Layout
+
+sum(usage[, 1] * c(node_size, 8)) / (1024 ^ 2)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+mem()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Don't expect this number to agree with the amount of memory that your operating
+ system says that R is using:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Some overhead associated with the R interpreter is not captured by these
+ numbers.
+\end_layout
+
+\begin_layout Itemize
+Both R and the operating system are lazy: they won't try and reclaim memory
+ until it's actually needed.
+ So R might be holding on to memory because the OS hasn't asked for it back
+ yet.
+\end_layout
+
+\begin_layout Itemize
+R counts the memory occupied by objects; there may be gaps from objects
+ that have been deleted.
+ This problem is known as memory fragmentation.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+We can build a function on top of mem() that tells us how memory changes
+ during the execution of a block of code.
+ Positive numbers represent an increase in the memory used by R, and negative
+ numbers a decrease.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+mem_change <- function(code) {
+\end_layout
+
+\begin_layout Plain Layout
+
+ start <- mem()
+\end_layout
+
+\begin_layout Plain Layout
+
+ expr <- substitute(code)
+\end_layout
+
+\begin_layout Plain Layout
+
+ eval(expr, parent.frame())
+\end_layout
+
+\begin_layout Plain Layout
+
+ rm(code, expr)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ round(mem() - start, 3)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+# Need about 4 mb to store 1 million integers
+\end_layout
+
+\begin_layout Plain Layout
+
+mem_change(x <- 1:1e6)
+\end_layout
+
+\begin_layout Plain Layout
+
+# We get that memory back when we delete it
+\end_layout
+
+\begin_layout Plain Layout
+
+mem_change(rm(x))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Garbage collection
+\end_layout
+
+\begin_layout Itemize
+In some languages you have to explicitly delete unnused objects so that
+ their memory can be returned.
+ R uses an alternative approach, called 
+\series bold
+garbage collection
+\series default
+ (GC for short), which automatically released memory when an object is no
+ longer used.
+ 
+\end_layout
+
+\begin_layout Itemize
+It does this based on environments and the regular scoping rules: when an
+ environment goes out of scope (for example, when a function finishes executing)
+, all of the contents of that environment are deleted and their memory is
+ freed.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+f<-function(){
+\end_layout
+
+\begin_layout Plain Layout
+
+1:1e6
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+mem_change(f())
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+This is a little bit of a simplification because in order to find out how
+ much memory is available, our 
+\family sans
+mem()
+\family default
+ function calls 
+\family sans
+gc()
+\family default
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+As well as returning the amount of memory currently used, 
+\family sans
+gc()
+\family default
+ also triggers garbage collection.
+ 
+\end_layout
+
+\begin_layout Itemize
+Garbage collection normally happens lazily: R calls 
+\family sans
+gc()
+\family default
+ when it needs more space.
+ In reality, that R might hold onto the memory after the function has terminated
+, but it will release it as soon as it's needed.
+\end_layout
+
+\begin_layout Itemize
+Despite what you might have read elsewhere, there's never any point in calling
+ 
+\family sans
+gc()
+\family default
+ yourself, apart to see how much memory is in use.
+ 
+\end_layout
+
+\begin_layout Itemize
+R will automatically run garbage collection whenever it needs more space;
+ if you want to see when that is, call 
+\family sans
+gcinfo(TRUE)
+\family default
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+The only reason you might want to call 
+\family sans
+gc()
+\family default
+ is that it also requests that R should return memory to the operating system.
+ 
+\end_layout
+
+\begin_layout Itemize
+Generally, GC takes care of releasing previously used memory.
+ However, you do need to be aware of situations that can cause memory leaks:
+ when you think you've removed all references to an object, but some are
+ still hanging around so the object never gets freed.
+ 
+\end_layout
+
+\begin_layout Itemize
+In R, the two main causes of memory leaks are 
+\bar under
+formulas and closures
+\bar default
+.
+ They both capture the enclosing environment, so objects in that environment
+ will not be reclaimed automatically.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+f1<-function(){
+\end_layout
+
+\begin_layout Plain Layout
+
+x<-1:1e6
+\end_layout
+
+\begin_layout Plain Layout
+
+10
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+mem_change(x<-f1())
+\end_layout
+
+\begin_layout Plain Layout
+
+x
+\end_layout
+
+\begin_layout Plain Layout
+
+rm(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+f2<-function(){
+\end_layout
+
+\begin_layout Plain Layout
+
+x<-1:1e6
+\end_layout
+
+\begin_layout Plain Layout
+
+a~b
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+mem_change(y<-f2())
+\end_layout
+
+\begin_layout Plain Layout
+
+object.size(y)
+\end_layout
+
+\begin_layout Plain Layout
+
+rm(y)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+f3<-function(){
+\end_layout
+
+\begin_layout Plain Layout
+
+x<-1:1e6
+\end_layout
+
+\begin_layout Plain Layout
+
+function() 10
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+mem_change(z<-f3())
+\end_layout
+
+\begin_layout Plain Layout
+
+object.size(z)
+\end_layout
+
+\begin_layout Plain Layout
+
+rm(z)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Memory profiling with lineprof
+\end_layout
+
+\begin_layout Itemize
+As well as using 
+\family sans
+mem_change()
+\family default
+ to explicitly capture the change in memory caused by running a block of
+ code, we can use memory profiling to automatically capture memory usage
+ every few milliseconds.
+\end_layout
+
+\begin_layout Itemize
+This functionality is provided by the 
+\family sans
+utils::Rprof()
+\family default
+, but it doesn't provide a very useful display of the results.
+ Instead, we'll use the lineprof
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/hadley/lineprof
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ package; it's powered by 
+\family sans
+Rprof()
+\family default
+, but displays the results in a more informative manner.
+\end_layout
+
+\begin_layout Subsubsection
+Modification in place
+\end_layout
+
+\begin_layout Itemize
+What happens to x in the following code?
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+x<-1:10
+\end_layout
+
+\begin_layout Plain Layout
+
+x[5]<-10
+\end_layout
+
+\begin_layout Plain Layout
+
+x
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There's two possibilities:
+\end_layout
+
+\begin_layout Enumerate
+R modifies the existing x in place.
+\end_layout
+
+\begin_layout Enumerate
+R makes a copy of x in a new location, modifies that new vector, and then
+ changes the name x to point to the new location.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+It turns out that R can do either depending on the circumstances.
+\end_layout
+
+\begin_layout Itemize
+In the example above, it will modify in place, but if another variable also
+ points to x, then it will copy it to a new location: To explore what's
+ going on in more detail we need some new tools found in the
+\family sans
+ pryr
+\family default
+ package.
+\end_layout
+
+\begin_layout Itemize
+Given the name of a variable, 
+\family sans
+address()
+\family default
+ tells us its location in memory, and 
+\family sans
+refs()
+\family default
+ tells us how many names point to that same location.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Note that if you're using Rstudio this 
+\family sans
+refs()
+\family default
+ will always return two: the environment browser makes a reference to every
+ object you create on the command line, but not inside a function.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(pryr)
+\end_layout
+
+\begin_layout Plain Layout
+
+x<-1:10
+\end_layout
+
+\begin_layout Plain Layout
+
+c(address(x),refs(x))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+y<-x
+\end_layout
+
+\begin_layout Plain Layout
+
+c(address(y),refs(y))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Note that refs is only an estimate and it can only distinguish between 1
+ and more than 1 references.
+ This means that 
+\family sans
+refs() 
+\family default
+returns 2 in both of the following cases:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+x<-1:5
+\end_layout
+
+\begin_layout Plain Layout
+
+y<-x
+\end_layout
+
+\begin_layout Plain Layout
+
+rm(y)
+\end_layout
+
+\begin_layout Plain Layout
+
+# Should really be one, because we've deleted y
+\end_layout
+
+\begin_layout Plain Layout
+
+refs(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+x<-1:5
+\end_layout
+
+\begin_layout Plain Layout
+
+y<-x
+\end_layout
+
+\begin_layout Plain Layout
+
+z<-x
+\end_layout
+
+\begin_layout Plain Layout
+
+# Should really be three
+\end_layout
+
+\begin_layout Plain Layout
+
+refs(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+When 
+\family sans
+refs(x)
+\family default
+ is one, modification will occur in place; when 
+\family sans
+refs(x)
+\family default
+ is two, it will make a copy (so that the other pointers to the object contined
+ unchanged).
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+x<-1:10
+\end_layout
+
+\begin_layout Plain Layout
+
+y=x
+\end_layout
+
+\begin_layout Plain Layout
+
+c(address(x),address(y))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+x[5]<-6L
+\end_layout
+
+\begin_layout Plain Layout
+
+c(address(x),address(y))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Another useful function is 
+\family sans
+tracemem()
+\family default
+, which will print a message every time the traced object is copied:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+x<-1:10
+\end_layout
+
+\begin_layout Plain Layout
+
+# Prints the current memory location of the object
+\end_layout
+
+\begin_layout Plain Layout
+
+tracemem(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+y<-x
+\end_layout
+
+\begin_layout Plain Layout
+
+# Prints where it has moved from and to
+\end_layout
+
+\begin_layout Plain Layout
+
+x[5]<-6L
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Non-primitive functions that touch the object always increment the ref count.
+ Primitive functions are usually written in such a way that they don't increment
+ the ref count.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The reasons are a little complicated, but see the R-devel thread confused
+ about NAMED
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://r.789695.n4.nabble.com/Confused-about-NAMED-td4103326.html
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+rm(list=ls())
+\end_layout
+
+\begin_layout Plain Layout
+
+x<-1:10
+\end_layout
+
+\begin_layout Plain Layout
+
+refs(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+mean(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+refs(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Touching the object forces an increment
+\end_layout
+
+\begin_layout Plain Layout
+
+f <- function(x) x
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- 1:10; f(x); refs(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Sum is primitive, so doesn't increment
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- 1:10; sum(x); refs(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# f() and g() never evaluate x so refs doesn't increment
+\end_layout
+
+\begin_layout Plain Layout
+
+f <- function(x) 10
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- 1:10; f(x); refs(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- function(x) substitute(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- 1:10; g(x); refs(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Generally, any primitive replacement function will modify in place, provided
+ that the object is not referred to elsewhere.
+ This includes 
+\family sans
+[[<-, [<-, @<-, $<-, attr<-, attributes<-, class<-, dim<-, dimnames<-, names<-
+\family default
+, and 
+\family sans
+levels<-
+\family default
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+To be precise, all non-primitive functions increment refs, but a primitive
+ function may be written in such a way that it doesn't increment refs.
+ 
+\end_layout
+
+\begin_layout Itemize
+The rules are sufficiently complicated that there's not a lot of point in
+ trying to memorise them; instead approach the problem practically; use
+ 
+\family sans
+refs()
+\family default
+ and 
+\family sans
+tracemem()
+\family default
+ to figure out when objects are being copied.
+\end_layout
+
+\begin_layout Itemize
+If you find yourself resorting to exotic tricks to avoid copies, it may
+ be time to rewrite your function in C++, as described in 
+\family sans
+Rcpp
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Loops
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+For loops in R have a reputation for being slow, but often this slowness
+ is because instead of modifying in place, you're modifying a copy.
+ 
+\end_layout
+
+\begin_layout Itemize
+Take the following code that subtracts the median from each column of a
+ large data.frame:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+rm(list=ls())
+\end_layout
+
+\begin_layout Plain Layout
+
+x <- data.frame(matrix(runif(100 * 1e4), ncol = 100))
+\end_layout
+
+\begin_layout Plain Layout
+
+medians <- vapply(x, median, numeric(1))
+\end_layout
+
+\begin_layout Plain Layout
+
+system.time({
+\end_layout
+
+\begin_layout Plain Layout
+
+ for(i in seq_along(medians)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	x[, i] <- x[, i] - medians[i]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+It's rather slow - we only have 100 columns and 10,000 rows, but it's taking
+ almost eight seconds.
+ We can use 
+\family sans
+address()
+\family default
+ and 
+\family sans
+refs()
+\family default
+ to see what's going on for a small sample of the loop:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+for(i in 1:5) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	x[, i] <- x[, i] - medians[i]
+\end_layout
+
+\begin_layout Plain Layout
+
+	print(c(address(x), refs(x)))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+In each iteration x is moved to a new location (copying the complete data
+ frame) and refs(x) is always 2.
+ This is because [<-.data.frame is not a primitive function, so it always
+ increments the refs.
+ 
+\end_layout
+
+\begin_layout Itemize
+We can make the function substantially more efficient by using either a
+ list or matrix instead of a data frame.
+ Modifying lists and matrices use primitive functions, so the refs are not
+ incremented and all modifications are in place.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+y <- as.list(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+system.time({
+\end_layout
+
+\begin_layout Plain Layout
+
+	for(i in seq_along(medians)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	 y[[i]] <- y[[i]] - medians[i]
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+z <- as.matrix(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+system.time({
+\end_layout
+
+\begin_layout Plain Layout
+
+	for(i in seq_along(medians)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	z[, i] <- z[, i] - medians[i]
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsection
+Rcpp
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+a fantastic tool written by Dirk Eddelbuettel and Romain Francois (with
+ key contributions by Doug Bates, John Chambers and JJ Allaire), that makes
+ it dead simple to connect C++ to R.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Sometimes R code just isn't fast enough - you've used profiling to find
+ the bottleneck, but there's simply no way to make the code any faster.
+ 
+\end_layout
+
+\begin_layout Itemize
+Typical bottlenecks that C++ can help with are:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Loops that can't easily be vectorised because each iteration depends on
+ the previous.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+C++ modifies objects in place, so there is little overhead when modifying
+ a data structure many times.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Recursive functions, or problems which involve calling functions millions
+ of times.
+\end_layout
+
+\begin_layout Itemize
+Problems that require advanced data structures and algorithms that R doesn't
+ provide.
+ Through the standard template library (STL), C++ has efficient implementations
+ of many important data structures, from ordered maps to double ended queues.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+While pure R code is relatively slow compared to C or C++, many bottlenecks
+ in base R have already been replaced with hand-written C functions.
+ This means that if your function already uses vectorised operations, you
+ are unlikely to see a large improvement in performance.
+\end_layout
+
+\begin_layout Itemize
+Note, however, that if you do rewrite a base C function with Rcpp, it's
+ likely to be much shorter, because you can use the more sophisticated tools
+ provided by C++.
+\end_layout
+
+\begin_layout Itemize
+Many good tutorials and references are freely available, including
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.learncpp.com/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.cplusplus.com/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+For more advanced topics, the "
+\emph on
+Effective C++
+\emph default
+" series by Scott Meyers is popular choice.
+ 
+\end_layout
+
+\begin_layout Itemize
+Dirk Eddelbuettel has written an entire book on Rcpp, "Seamless R and C++
+ integration with Rcpp" 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.springer.com/statistics/computational+statistics/book/978-1-4614-6867-7
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Getting started
+\end_layout
+
+\begin_layout Itemize
+All examples in this chapter need at least version 0.10.1 of the Rcpp package.
+ This version includes 
+\family sans
+cppFunction
+\family default
+ and 
+\family sans
+sourceCpp
+\family default
+, which makes it very easy to connect C++ to R.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+library(Rcpp)
+\end_layout
+
+\begin_layout Plain Layout
+
+cppFunction('
+\end_layout
+
+\begin_layout Plain Layout
+
+int add(int x, int y, int z){
+\end_layout
+
+\begin_layout Plain Layout
+
+int sum=x+y+z;
+\end_layout
+
+\begin_layout Plain Layout
+
+return sum;
+\end_layout
+
+\begin_layout Plain Layout
+
+}'
+\end_layout
+
+\begin_layout Plain Layout
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+add # like a regular R function, printing displays info about the function
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+add(1,2,3)
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+When you run this code, Rcpp will compile the C++ code and construct an
+ R function that connects to the compiled C++ function.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Getting started with C++
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+No inputs, scalar output
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+one<-function()1L
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+We can compile and use this from R with cppFunction 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+cppFunction('
+\end_layout
+
+\begin_layout Plain Layout
+
+int one(){
+\end_layout
+
+\begin_layout Plain Layout
+
+return 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+')
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+This small function illustrates a number of important differences between
+ R and C++:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The syntax to create a function looks like the syntax to call a function;
+ you don't use assignment to create functions like in R.
+\end_layout
+
+\begin_layout Itemize
+You must declare the type of output the function returns.
+ The classes for the most common types of R vectors are: NumericVector,
+ IntegerVector, CharacterVector and LogicalVector.
+\end_layout
+
+\begin_layout Itemize
+Scalars and vectors are different.
+ The scalar equivalents of numeric, integer, character and logical vectors
+ are: 
+\family sans
+double, int, String
+\family default
+ and 
+\family sans
+bool
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+You must use an explicit return statement to return a value from the function.
+\end_layout
+
+\begin_layout Itemize
+Every statement is terminated by a ;.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Scalar input, scalar output
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+signR<-function(x){
+\end_layout
+
+\begin_layout Plain Layout
+
+if (x>0) 1
+\end_layout
+
+\begin_layout Plain Layout
+
+else if (x==0) 0
+\end_layout
+
+\begin_layout Plain Layout
+
+else -1
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+cppFunction('
+\end_layout
+
+\begin_layout Plain Layout
+
+int signC(int x){
+\end_layout
+
+\begin_layout Plain Layout
+
+if (x>0){
+\end_layout
+
+\begin_layout Plain Layout
+
+return 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+}else if (x==0){
+\end_layout
+
+\begin_layout Plain Layout
+
+return 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+}else {
+\end_layout
+
+\begin_layout Plain Layout
+
+return -1;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+}'
+\end_layout
+
+\begin_layout Plain Layout
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+In the C++ version:
+\end_layout
+
+\begin_layout Itemize
+We declare the type of each input in the same way we declare the type of
+ the output.
+ While this makes the code a little more verbose, it also makes it very
+ obvious what type of input the function needs.
+\end_layout
+
+\begin_layout Itemize
+The if syntax is identical - while there are some big differences between
+ R and C++, there are also lots of similarities! C++ also has a while statement
+ that works the same way as R's.
+ You can also use 
+\family sans
+break
+\family default
+, but use 
+\family sans
+continue
+\family default
+ instead of 
+\family sans
+next
+\family default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Vector input, scalar output
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+One big difference between R and C++ is that the cost of loops is much lower.
+ For example, we could implement the sum function in R using a loop.
+ If you've been programming in R a while, you'll probably have a visceral
+ reaction to this function!
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+sumR<-function(x){
+\end_layout
+
+\begin_layout Plain Layout
+
+total<-0
+\end_layout
+
+\begin_layout Plain Layout
+
+for (i in seq_along(x))
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+total<-total+x[i]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+total
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+cppFunction('
+\end_layout
+
+\begin_layout Plain Layout
+
+double sumC(NumericVector x){
+\end_layout
+
+\begin_layout Plain Layout
+
+int n=x.size();
+\end_layout
+
+\begin_layout Plain Layout
+
+double total=0;
+\end_layout
+
+\begin_layout Plain Layout
+
+for (int i=0; i<n;++i){
+\end_layout
+
+\begin_layout Plain Layout
+
+total+=x[i];
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+return total;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+')
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+The C++ version is similar, but:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+To find the length of the vector, we use the 
+\family sans
+size()
+\family default
+ method, which returns an integer.
+ 
+\end_layout
+
+\begin_layout Itemize
+The for statement has a different syntax: 
+\family sans
+for(intialisation; condition; increase)
+\family default
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+Vectors in C++ start at 0.
+\end_layout
+
+\begin_layout Itemize
+We can't use <- (or ->) for assignment, but instead use =.
+\end_layout
+
+\begin_layout Itemize
+We can take advantage of the 
+\series bold
+\bar under
+in-place modification operators
+\series default
+\bar default
+: total += x[i] is equivalent to 
+\family sans
+total = total + x[i]
+\family default
+.
+ Similar in-place operators are -=, *= and /=.
+ 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+This is known as a side-effect, where the function ++ or += modifies its
+ argument i or x without us asking.
+ Functions in R rarely have side-effects, and we need to be careful that
+ our Rcpp functions don't modify their inputs.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Vector input, vector output
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+we'll create a function that computes the distance between one value and
+ a vector of other values:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+pdistR<-function(x,ys){
+\end_layout
+
+\begin_layout Plain Layout
+
+sqrt((x-ys)^2)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+cppFunction('
+\end_layout
+
+\begin_layout Plain Layout
+
+NumericVector pdistC(double x, NumericVector ys) {
+\end_layout
+
+\begin_layout Plain Layout
+
+int n = ys.size();
+\end_layout
+
+\begin_layout Plain Layout
+
+NumericVector out(n);
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\end_layout
+
+\begin_layout Plain Layout
+
+for(int i = 0; i < n; ++i) {
+\end_layout
+
+\begin_layout Plain Layout
+
+out[i] = sqrt(pow(ys[i] - x, 2.0));
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+return out;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+')
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+This function introduces only a few new concepts:
+\end_layout
+
+\begin_layout Itemize
+We create a new numeric vector of length n with a constructor: 
+\family sans
+NumericVector out(n)
+\family default
+.
+ Another useful way of making a vector is to copy an existing vector: 
+\family sans
+NumericVector zs = clone(ys
+\family default
+).
+\end_layout
+
+\begin_layout Itemize
+C++ doesn't use ^ for exponentiation, it instead uses the 
+\family sans
+pow
+\family default
+ function.
+\end_layout
+
+\begin_layout Itemize
+Note that because the R function is fully vectorised, it is already going
+ to be fast.
+\end_layout
+
+\begin_layout Itemize
+The reason why the C++ function is faster is subtle, and relates to memory
+ management.
+ The R version needs to create an intermediate vector the same length as
+ y (x - ys), and allocating memory is an expensive operation.
+ The C++ function avoids this overhead because it uses an intermediate scalar.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Matrix input, vector output
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Each vector type also has a matrix equivalent: 
+\family sans
+NumericMatrix, IntegerMatrix, CharacterMatrix
+\family default
+ and 
+\family sans
+LogicalMatrix
+\family default
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+cppFunction('   
+\end_layout
+
+\begin_layout Plain Layout
+
+NumericVector rowSumsC(NumericMatrix x) {     
+\end_layout
+
+\begin_layout Plain Layout
+
+int nrow = x.nrow(), ncol = x.ncol();     
+\end_layout
+
+\begin_layout Plain Layout
+
+NumericVector out(nrow);
+\end_layout
+
+\begin_layout Plain Layout
+
+    for (int i = 0; i < nrow; i++) {       
+\end_layout
+
+\begin_layout Plain Layout
+
+			double total = 0;       
+\end_layout
+
+\begin_layout Plain Layout
+
+			for (int j = 0; j < ncol; j++) {         
+\end_layout
+
+\begin_layout Plain Layout
+
+			total += x(i, j);       
+\end_layout
+
+\begin_layout Plain Layout
+
+}       
+\end_layout
+
+\begin_layout Plain Layout
+
+	out[i] = total;     
+\end_layout
+
+\begin_layout Plain Layout
+
+}     
+\end_layout
+
+\begin_layout Plain Layout
+
+return out;   
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\begin_layout Plain Layout
+
+')
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+The main thing to notice is that when subsetting a matrix we use () and
+ not [], and that matrix objects have nrow() and ncol() methods.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Using 
+\family sans
+sourceCpp
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+To simplify the initial presentation the examples in this section have used
+ inline C++ via cppFunction.
+ 
+\end_layout
+
+\begin_layout Itemize
+For real problems, it's usually easier to use standalone C++ files and then
+ source them into R using the 
+\family sans
+sourceCpp
+\family default
+ function.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+This will enable you to take advantage of text editor support for C++ files
+ (e.g.
+ syntax highlighting) as well as make it easier to identify the line numbers
+ of compilation errors.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Standalone C++ files can also contain embedded R code in special C++ comment
+ blocks.
+ This is really convenient if you want to run some R test code.
+\end_layout
+
+\begin_layout Itemize
+Your standalone C++ file should have extension .cpp, and needs to start with:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+#include <Rcpp.h>
+\end_layout
+
+\begin_layout Plain Layout
+
+using namespace Rcpp;
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+And for each function that you want available within R, you need to prefix
+ it with
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+This is somewhat similar to roxygen2's @export tag, but Rcpp::export controls
+ whether a function is exported from C++ to R, where @export controls whether
+ a function is exported from a package and made available to a package user.
+\end_layout
+
+\end_inset
+
+ (Note that the space is mandatory):
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+// [[Rcpp::export]]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Then using 
+\family sans
+sourceCpp("path/to/file.cpp")
+\family default
+ will compile the C++ code, create the matching R functions and add them
+ to your current session.
+ 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Note that these functions will not persist across save() and load(), such
+ as when you restore your workspace.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+#include <Rcpp.h> 
+\end_layout
+
+\begin_layout Plain Layout
+
+using namespace Rcpp;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// [[Rcpp::export]] 
+\end_layout
+
+\begin_layout Plain Layout
+
+double meanC(NumericVector x) {   
+\end_layout
+
+\begin_layout Plain Layout
+
+int n = x.size();   
+\end_layout
+
+\begin_layout Plain Layout
+
+double total = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+  for(int i = 0; i < n; ++i) {     
+\end_layout
+
+\begin_layout Plain Layout
+
+total += x[i] / n;   
+\end_layout
+
+\begin_layout Plain Layout
+
+}   
+\end_layout
+
+\begin_layout Plain Layout
+
+return total; 
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#save to a file to computer with extension ".cpp"
+\end_layout
+
+\begin_layout Plain Layout
+
+sourceCpp("/Users/askming/Desktop/sum.cpp") 
+\end_layout
+
+\begin_layout Plain Layout
+
+meanC(runif(1e6))
+\end_layout
+
+\begin_layout Plain Layout
+
+[1] 0.499726
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Whenever implementing a numerical algorithm it's always good to check what
+ is already known about the problem.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Rcpp classes and methods
+\end_layout
+
+\begin_layout Itemize
+All R objects have attributes, which can be queried and modified with the
+ attr method.
+\end_layout
+
+\begin_layout Itemize
+Rcpp also provides a 
+\family sans
+names() 
+\family default
+method for the commonly used attribute: 
+\family sans
+attr("names")
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+The following code snippet illustrates these methods.
+ Note the use of the create() class method to easily create an R vector
+ from C++ scalar values.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+#include <Rcpp.h> using namespace Rcpp;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// [[Rcpp::export]] 
+\end_layout
+
+\begin_layout Plain Layout
+
+NumericVector attribs() {   
+\end_layout
+
+\begin_layout Plain Layout
+
+	NumericVector out = NumericVector::create(1, 2, 3);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	out.names() = CharacterVector::create("a", "b", "c");
+\end_layout
+
+\begin_layout Plain Layout
+
+	out.attr("my-attr") = "my-value";   
+\end_layout
+
+\begin_layout Plain Layout
+
+	out.attr("class") = "my-class";
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	return out; 
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+You can use the slot() method in a similar way to get and set slots of S4
+ objects.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Rcpp also provides classes List and DataFrame.
+ These are more useful for output than input, because lists and data frames
+ can contain arbitrary classes, and this does not fit well with C++'s desire
+ to have the types of all inputs known in advance.
+ 
+\end_layout
+
+\begin_layout Itemize
+The following code illustrates how you might component the mean percentage
+ error (mpe) of a linear model.
+ This isn't a very good example for when you might use C++ (because it's
+ so easily implemented in R), but it illustrates how to pull out the components
+ of a list.
+ Note the use of the 
+\family sans
+inherits()
+\family default
+ method and the 
+\family sans
+stop()
+\family default
+ function to check that the object really is a linear model.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+#include <Rcpp.h> using namespace Rcpp;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// [[Rcpp::export]] 
+\end_layout
+
+\begin_layout Plain Layout
+
+double mpe(List mod) {   
+\end_layout
+
+\begin_layout Plain Layout
+
+if (!mod.inherits("lm")) stop("Input must be a linear model");
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\end_layout
+
+\begin_layout Plain Layout
+
+NumericVector resid = as<NumericVector>(mod["residuals"]);
+\end_layout
+
+\begin_layout Plain Layout
+
+NumericVector fitted = as<NumericVector>(mod["fitted.values"]);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+int n = resid.size();   
+\end_layout
+
+\begin_layout Plain Layout
+
+double err = 0;   
+\end_layout
+
+\begin_layout Plain Layout
+
+for(int i = 0; i < n; ++i) {     
+\end_layout
+
+\begin_layout Plain Layout
+
+err += resid[i] / (fitted[i] + resid[i]);   
+\end_layout
+
+\begin_layout Plain Layout
+
+}   
+\end_layout
+
+\begin_layout Plain Layout
+
+return err / n; 
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+mod <- lm(mpg ~ wt, data = mtcars) 
+\end_layout
+
+\begin_layout Plain Layout
+
+mpe(mod) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#> [1] -0.0154
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+You can put R functions in an object of type Function.
+ The string constructor of the function object will look for a function
+ of that name in the global environment.
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+Function assign("assign");
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+The challenge is storing the output.
+ If you don't know in advance what the output will be, store it in an RObject
+ or in components of a List.
+ For example, the following code is a basic implementation of 
+\family sans
+lapply
+\family default
+ in C++:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+#include <Rcpp.h> 
+\end_layout
+
+\begin_layout Plain Layout
+
+using namespace Rcpp;
+\end_layout
+
+\begin_layout Plain Layout
+
+// [[Rcpp::export]] 
+\end_layout
+
+\begin_layout Plain Layout
+
+List lapply1(List input, Function f) {   
+\end_layout
+
+\begin_layout Plain Layout
+
+int n = input.size();   
+\end_layout
+
+\begin_layout Plain Layout
+
+List out(n);
+\end_layout
+
+\begin_layout Plain Layout
+
+  for(int i = 0; i < n; i++) {     
+\end_layout
+
+\begin_layout Plain Layout
+
+out[i] = f(input[i]);   
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+  return out; 
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+There are also classes for many more specialised language objects: Environment,
+ ComplexVector, RawVector, DottedPair, Language, Promise, Symbol, WeakReference
+ and so on.
+ These are beyond the scope of this chapter and won't be discussed further.
+\end_layout
+
+\begin_layout Subsubsection
+Rcpp sugar
+\end_layout
+
+\begin_layout Subsubsection
+Missing values
+\end_layout
+
+\begin_layout Subsubsection
+The STL
+\end_layout
+
+\begin_layout Subsubsection
+Case studies
+\end_layout
+
+\begin_layout Subsubsection
+Using Rcpp in a Package
+\end_layout
+
+\begin_layout Subsubsection
+Adding Rcpp to an existing package (Rcpp<=0.10.6)
+\end_layout
+
+\begin_layout Subsubsection
+Adding Rcpp to an existing package (Rcpp>=0.10.7)
+\end_layout
+
+\begin_layout Subsubsection
+More details
+\end_layout
+
+\begin_layout Subsubsection
+Learning more
+\end_layout
+
+\begin_layout Subsubsection
+Acknowledgements
+\end_layout
+
+\begin_layout Subsection
+R's C interface
+\end_layout
+
+\begin_layout Subsubsection
+Introduction
+\end_layout
+
+\begin_layout Subsubsection
+Differences between R and C
+\end_layout
+
+\begin_layout Subsubsection
+Calling C functions from R
+\end_layout
+
+\begin_layout Subsubsection
+Basic data structures
+\end_layout
+
+\begin_layout Subsubsection
+Coercion and object creation
+\end_layout
+
+\begin_layout Subsubsection
+Modifying objects
+\end_layout
+
+\begin_layout Subsubsection
+Pairlists and symbols
+\end_layout
+
+\begin_layout Subsubsection
+Missing and symbols
+\end_layout
+
+\begin_layout Subsubsection
+Missing and non-finite values
+\end_layout
+
+\begin_layout Subsubsection
+Checking types in C
+\end_layout
+
+\begin_layout Subsubsection
+Finding the C source code for a function .External
+\end_layout
+
+\begin_layout Subsubsection
+Using C code in a package
+\end_layout
+
+\end_body
+\end_document

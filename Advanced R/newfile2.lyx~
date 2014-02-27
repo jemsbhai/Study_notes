@@ -1,0 +1,1198 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\date{}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5cm
+\topmargin 2.5cm
+\rightmargin 2.5cm
+\bottommargin 3.5cm
+\headheight 2.5cm
+\headsep 2.5cm
+\footskip 2.5cm
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation indent
+\paragraph_indentation 0bp
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\bullet 0 0 27 -1
+\bullet 1 0 15 -1
+\bullet 2 0 24 -1
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Advanced R programming
+\end_layout
+
+\begin_layout Author
+(by Hadley Wickham)
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://adv-r.had.co.nz
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Itemize
+Become a R programmer from a R user.
+\end_layout
+
+\begin_layout Itemize
+There are two meta-techniques that are tremendously helpful for improving
+ your skills as an R programmer: 
+\emph on
+reading the source
+\emph default
+, and 
+\emph on
+adopting a scientific mindset
+\emph default
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Reading source code
+\series default
+ is a tremendously useful technique because it exposes you to new ways of
+ doing things.
+ Over time you'll develop a sense of taste as an R programmer, and even
+ if you find something your taste violently objects to, it's still helpful:
+ emulate the things you like and avoid the things you don't like.
+\end_layout
+
+\begin_layout Itemize
+It's a great idea to start by reading the source code for the functions
+ and packages that you use most frequently.
+ 
+\end_layout
+
+\begin_layout Itemize
+If you don't understand how something works, develop a hypothesis, design
+ some experiments, run them and record the results.
+ This exercise is extremely useful if you can't figure it out and need to
+ get help from others: you can easily show what you tried, and when you
+ learn the right answer, you'll be mentally prepared to update your world
+ view.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Recommended reading
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+R has aspects of both functional and object-oriented (OO) programming languages,
+ and learning how these aspects are expressed in R will help you translate
+ your existing knowledge from other programming languages, and to help you
+ identify areas where you can improve.
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+The Structure and Interpretation of Computer Programs
+\emph default
+ (SICP)
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+ http://mitpress.mit.edu/sicp/full-text/book/book.html
+\end_layout
+
+\end_inset
+
+ is particularly helpful.
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+Concepts, Techniques and Models of Computer Programming
+\emph default
+ by Peter van Roy and Sef Haridi.
+ It helps to understand that R's copy-on-modify semantics make it substantially
+ easier to reason about code, and while the current implementation in R
+ is not very efficient, that it is a solvable problem.
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+The Pragmatic Programmer
+\emph default
+, by Andrew Hunt and David Thomas.
+ This book is program language agnostic, and provides great advice for how
+ to be a better programmer.
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Foundations
+\end_layout
+
+\begin_layout Subsection
+Data structures
+\end_layout
+
+\begin_layout Itemize
+R's base data structures are summarised in the table below, organised by
+ their dimensionality and whether they're homogeneous (all contents must
+ be of the same type) or heterogeneous (the contents can be of different
+ types):
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Homogeneous
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Heterogeneous
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1d
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Atomic vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+List
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2d
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Matrix
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data frame
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+nd
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Array
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\align left
+Note that R has no scalar, or 0-dimensional, types.
+ All scalars (single numbers or strings) are length-one vectors.
+\end_layout
+
+\begin_layout Itemize
+When trying to understand the structure of an arbitrary object in R your
+ most important tool is str(), short for structure: it gives a compact human
+ readable description of any R data structure.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Vectors
+\end_layout
+
+\begin_layout Itemize
+The basic data structure in R is the vector, which comes in two basic flavours:
+ 
+\series bold
+atomic vectors
+\series default
+ and 
+\series bold
+lists
+\series default
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Atomic vector: must have the same type in contents
+\end_layout
+
+\begin_layout Enumerate
+List: the contents can have differnt types
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Three properties of a vector:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\family sans
+typeof()
+\family default
+: what it is
+\end_layout
+
+\begin_layout Enumerate
+
+\family sans
+length()
+\family default
+: how long it is
+\end_layout
+
+\begin_layout Enumerate
+
+\family sans
+attributes()
+\family default
+: additional arbitrary metadata, like 
+\family sans
+names()
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Atomic vectors and lists are the building blocks for higher dimensional
+ data structures.
+ Atomic vectors extend to matrices and arrays, and lists are used to create
+ data frames
+\end_layout
+
+\begin_layout Itemize
+Each type of vector comes with an 
+\family sans
+as.*
+\family default
+ coercion function and an 
+\family sans
+is.*
+\family default
+ testing function.
+ But beware.
+ For historical reasons, 
+\family sans
+is.vector()
+\family default
+ returns 
+\family sans
+TRUE
+\family default
+ only if the object is a vector with no attributes apart from names.
+ Use 
+\family sans
+is.atomic(x)
+\family default
+ || 
+\family sans
+is.list(x)
+\family default
+ to test if an object is actually a vector.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Atomic vectors
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Missing values
+\series default
+ are specified with NA, which is a logical vector of length 1.
+ NA will always be coerced to the correct type with 
+\family sans
+c()
+\family default
+, or you can create NA's of specific types with 
+\family sans
+NA_real_ (double), NA_integer_ and NA_character_
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Types and tests
+\series default
+: 
+\family sans
+typeof(), is.character(), is.double(), is.integer(), is.logical()
+\family default
+, or, more generally, 
+\family sans
+is.atomic()
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Coercion
+\series default
+: When attempt to combine different types in atomic vector they will be
+ coerced to the lowest common type: (ordered from low to high) character,
+ double, integer and logical.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+You can manually force one type of vector to another using a coercion function:
+ 
+\family sans
+as.character(), as.double(), as.integer(), as.logical()
+\family default
+.
+ 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Enumerate
+
+\series bold
+Lists
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Lists are different from atomic vectors in that they can contain any other
+ type of vector, including lists.
+ You construct them using 
+\family sans
+list()
+\family default
+ instead of 
+\family sans
+c()
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+Lists are sometimes called 
+\series bold
+recursive vectors
+\series default
+, because a list can contain other lists.
+ This makes them fundamentally different from atomic vectors.
+\end_layout
+
+\begin_layout Itemize
+
+\family sans
+c()
+\family default
+ will combine several lists into one.
+ If given a combination of atomic vectors and lists, c() will coerce the
+ vectors to list before combining them.
+ E.g.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family sans
+y <- c(list(1, 2), c(3, 4))
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+, y then is a list of 4.
+\end_layout
+
+\begin_layout Itemize
+Lists are used to build up many of the more complicated data structures
+ in R.
+ For example, both 
+\emph on
+data frames
+\emph default
+, and linear models objects (as produced by lm()) are lists.
+\end_layout
+
+\begin_layout Itemize
+Using the same implicit coercion rules as for c(), you can turn a list back
+ into an atomic vector using unlist().
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+
+\series bold
+Factors
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A factor is a vector that can contain only predefined values.
+ It is R's structure for dealing with qualitative data.
+\end_layout
+
+\begin_layout Itemize
+A factor is not an atomic vector, but it's built on top of an integer vector
+ using an S3 class.
+\end_layout
+
+\begin_layout Itemize
+Factors have 
+\emph on
+two key attributes
+\emph default
+: 
+\series bold
+their class()
+\series default
+, "factor", which controls their behaviour; and 
+\series bold
+their levels()
+\series default
+, the set of allowed values.
+\end_layout
+
+\begin_layout Itemize
+While factors look (and often behave) like character vectors, they are actually
+ integers under the hood and you need to be careful when treating them like
+ strings.
+\end_layout
+
+\begin_layout Itemize
+Factors are useful when you know the possible values a variable may take,
+ even if you don't see all values in a given dataset.
+ Using a factor instead of a character vector makes it obvious when some
+ groups contain no observations
+\end_layout
+
+\begin_layout Itemize
+Sometimes when reading the data into R, the numeric variable will be coerced
+ into factor if there are some missing values encoded in special way like
+ .
+ or -.
+ We can avoid this by using na.strings argument in 
+\family sans
+read.csv()
+\family default
+: e.g.
+ 
+\family sans
+z <- read.csv(text="value
+\backslash
+n12
+\backslash
+n1
+\backslash
+n.
+\backslash
+n9", na.strings=".")
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+To coerce the vector from a factor to numeric we need first coerce it into
+ character and then from character to numeric.
+ E.g.
+ 
+\family sans
+as.numeric(as.character(z$value))
+\end_layout
+
+\begin_layout Itemize
+Unfortunately, most data loading functions in R automatically convert character
+ vectors to factors.
+ This is suboptimal, because there's no way for those functions to know
+ the set of all possible levels and their optimal order.
+ A global option (
+\family sans
+options(stringsAsFactors = FALSE)
+\family default
+ ) is available to control this behaviour, but it's not recommended - it
+ makes it harder to share your code, and it may have unexpected consequences
+ when combined with other code (either from packages, or code that you're
+ 
+\family sans
+source()
+\family default
+ing).
+ 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Global options make code harder to understand, because they increase the
+ number of lines you need to read to understand what a function is doing.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+What makes 
+\family sans
+is.vector()
+\family default
+ and 
+\family sans
+is.numeric()
+\family default
+ fundamentally different to 
+\family sans
+is.list()
+\family default
+ and 
+\family sans
+is.character()
+\family default
+?
+\end_layout
+
+\begin_layout Itemize
+Why is the default (and shortest) NA a logical vector? What's special about
+ logical vectors?
+\end_layout
+
+\begin_layout Subsubsection
+Attributes
+\end_layout
+
+\begin_layout Itemize
+All objects can have arbitrary additional attributes.
+ These can be thought of as a named list (with unique names).
+ Attributes can be accessed individually with 
+\family sans
+attr()
+\family default
+ or all at once (as a list) with 
+\family sans
+attributes()
+\family default
+.
+ E.g.
+ 
+\family sans
+attr(y, "my_attribute") <- "This is a vector"
+\family default
+; 
+\family sans
+str(attributes(y))
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+The 
+\family sans
+structure()
+\family default
+ function returns a new object with modified attributes
+\end_layout
+
+\begin_layout Itemize
+By default, most attributes are lost when modifying a vector (e.g.
+ 
+\family sans
+sum(y), y[1]
+\family default
+); the exceptions are for the most common attributes: 
+\family sans
+names()
+\family default
+ (character vector of element names), 
+\family sans
+class(), dim()
+\family default
+ (used to turn vectors into high-dimensional structures).
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Names
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+You can name a vector in three ways:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+During creation: 
+\family sans
+x <- c(a = 1, b = 2, c = 3) 
+\end_layout
+
+\begin_layout Itemize
+By modifying an existing vector: 
+\family sans
+x <- 1:3; names(x) <- c("a", "b", "c") 
+\end_layout
+
+\begin_layout Itemize
+By creating a modified vector: 
+\family sans
+x <- setNames(1:3, c("a", "b", "c"))
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Names should be unique, because character subsetting, the biggest reason
+ to use names, will only return the first match.
+\end_layout
+
+\begin_layout Itemize
+Not all elements of a vector need to have a name.
+ If any names are missing, 
+\family sans
+names()
+\family default
+ will return an empty string for those elements.
+ If all names are missing, 
+\family sans
+names()
+\family default
+ will return 
+\family sans
+NULL
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+You can create a vector without names using 
+\family sans
+unname(x)
+\family default
+, or remove names in place with 
+\family sans
+names(x) <- NULL
+\family default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Matrices and arrays
+\end_layout
+
+\begin_layout Itemize
+Adding a 
+\family sans
+dim()
+\family default
+ attribute allows an atomic vector to also be treated like a multi-dimensional
+ array.
+ A special case of a general array is the matrix, which has two dimensions.
+\end_layout
+
+\begin_layout Itemize
+Matrices and arrays are created with 
+\family sans
+matrix()
+\family default
+ and 
+\family sans
+array()
+\family default
+, or by using the replacement form of 
+\family sans
+dim()
+\family default
+.
+ E.g.
+ 
+\family sans
+array(1:12, c(2, 3, 2))
+\end_layout
+
+\begin_layout Itemize
+The basic properties 
+\family sans
+length()
+\family default
+ and 
+\family sans
+names()
+\family default
+ have high-dimensional generalisations that work with matrices and arrays:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\family sans
+length()
+\family default
+ generalises to 
+\family sans
+nrow()
+\family default
+ and 
+\family sans
+ncol()
+\family default
+ for matrices, and 
+\family sans
+dim()
+\family default
+ for arrays.
+\end_layout
+
+\begin_layout Itemize
+
+\family sans
+names()
+\family default
+ generalises to 
+\family sans
+rownames()
+\family default
+ and 
+\family sans
+colnames()
+\family default
+ for matrices, and 
+\family sans
+dimnames()
+\family default
+, a list, for arrays.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\family sans
+c()
+\family default
+ generalises to 
+\family sans
+cbind()
+\family default
+ and 
+\family sans
+rbind() 
+\family default
+for matrices, and to 
+\family sans
+abind()
+\family default
+ (provided by the 
+\family sans
+abind
+\family default
+ package) for arrays.
+ 
+\end_layout
+
+\begin_layout Itemize
+While atomic vectors are most commonly turned into matrices, the dimension
+ attribute can also be set on lists to make list-matrices or list-arrays.
+ 
+\family sans
+l <- list(1:3, "a", TRUE, 1.0); dim(l) <- c(2, 2).
+\end_layout
+
+\begin_layout Subsubsection
+Data frames
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+A data frame is a list of equal-length vectors.
+
+\series default
+ This makes it a 2-dimensional structure, so it shares properties of both
+ the matrix and the list.
+ This means that a data frame has 
+\family sans
+names(), colnames()
+\family default
+ and 
+\family sans
+rownames()
+\family default
+, although 
+\family sans
+names()
+\family default
+ and 
+\family sans
+colnames()
+\family default
+ are the same thing.
+ The 
+\family sans
+length()
+\family default
+ of a data frame is the length of the underlying list and so is the same
+ as 
+\family sans
+ncol(), nrow()
+\family default
+ gives the number of rows.
+\end_layout
+
+\begin_layout Itemize
+As doing subsetting, you can subset a data frame like a 1d structure (where
+ it behaves like a list), or a 2d structure (where it behaves like a matrix).
+\end_layout
+
+\begin_layout Itemize
+By default 
+\family sans
+data.frame()
+\family default
+ converts strings into factors.
+ Use 
+\family sans
+stringAsFactors = FALSE
+\family default
+ to suppress this behaviour.
+\end_layout
+
+\begin_layout Itemize
+
+\family sans
+data.frame
+\family default
+ is an S3 class, so its type reflects the underlying vector used to build
+ it: list.
+ (
+\family sans
+typeof()
+\family default
+ gives list).
+ We should look at its 
+\family sans
+class()
+\family default
+ or test explicitly with 
+\family sans
+is.data.frame()
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+We can combine data frames using 
+\family sans
+cbind()
+\family default
+ and 
+\family sans
+rbind()
+\family default
+.
+ When combining column-wise, only the number of rows matters, the rownames
+ are ignored; while when combining row-wise, the column names must match.
+ If you want to combine data frames that may not have all the same variables,
+ use 
+\family sans
+plyr::rbind.fill().
+ 
+\end_layout
+
+\begin_layout Itemize
+Since a data frame is a list of vectors, it is possible for a data frame
+ to have a column that is a list.
+\end_layout
+
+\begin_layout Itemize
+Ex: 
+\family sans
+dfl <- data.frame(x = 1:3, y = I(list(1:2, 1:3, 1:4)))
+\family default
+, use 
+\family sans
+I()
+\family default
+ to treat the whole list as an unit, otherwise, 
+\family sans
+data.frame()
+\family default
+ will try to used each element in the list as a column.
+\end_layout
+
+\begin_layout Subsection
+Subsetting
+\end_layout
+
+\begin_layout Subsubsection
+Data types
+\end_layout
+
+\begin_layout Subsubsection
+Subsetting operators
+\end_layout
+
+\begin_layout Subsubsection
+Subsetting and assignment
+\end_layout
+
+\begin_layout Subsubsection
+Applications
+\end_layout
+
+\begin_layout Subsection
+Vocabulary
+\end_layout
+
+\begin_layout Subsection
+Functions
+\end_layout
+
+\begin_layout Subsection
+OO field guide
+\end_layout
+
+\begin_layout Subsection
+Environments
+\end_layout
+
+\begin_layout Subsection
+Exceptions and debugging
+\end_layout
+
+\begin_layout Section
+Functional Programming
+\end_layout
+
+\begin_layout Subsection
+Functional programming
+\end_layout
+
+\begin_layout Subsection
+Functionals
+\end_layout
+
+\begin_layout Subsection
+Function operators
+\end_layout
+
+\begin_layout Section
+Metaprogramming
+\end_layout
+
+\begin_layout Subsection
+Introduction
+\end_layout
+
+\begin_layout Subsection
+Expressions
+\end_layout
+
+\begin_layout Subsection
+Special environments
+\end_layout
+
+\begin_layout Subsection
+Domian specific languages
+\end_layout
+
+\begin_layout Section
+Performant Code
+\end_layout
+
+\begin_layout Subsection
+Performance
+\end_layout
+
+\begin_layout Subsection
+Profiling
+\end_layout
+
+\begin_layout Subsection
+Memory
+\end_layout
+
+\begin_layout Subsection
+Rcpp
+\end_layout
+
+\begin_layout Subsection
+R's C interface
+\end_layout
+
+\end_body
+\end_document
