@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title><a href="https://en.wikipedia.org/wiki/Dirichlet_process">Dirichlet process (wiki)</a></title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+</head>
+
+<body>
+<h1><a href="https://en.wikipedia.org/wiki/Dirichlet_process">Dirichlet process (wiki)</a></h1>
+
+<h3>Formal definition</h3>
+
+<p>A Dirichlet process over a set \( S \) is a <em>stochastic process</em> whose sample path (i.e. an infinite-dimensional set of random variates drawn from the process) is a probability distribution on \( S \). The finite dimensional distributions are from the <a href="https://en.wikipedia.org/wiki/Dirichlet_distribution">Dirichlet distribution</a>: If \( H \) is a finite measure on \( S \), \( \alpha \) is a positive real number and \( X \) is a sample path drawn from a Dirichlet process, written as
+\[ X \sim \mathrm{DP}\left(\alpha, H\right)  \]
+then for any measureable <a href="https://en.wikipedia.org/wiki/Partition_of_a_set">partition</a> of \( S \), say \( \left\{B_i\right\}_{i=1}^{n} \), we have that
+\[ \left(X\left(B_1\right),\dots,X\left(B_n\right)\right) \sim \mathrm{Dirichlet}\left(\alpha H\left(B_1\right),\dots, \alpha H\left(B_n\right)\right). \]</p>
+
+<h3>A list of facts</h3>
+
+<ul>
+<li><p>In probability theory, a Dirichlet process is a random process, that is a probability distribution whose domain is itself a set of probability distributions.</p></li>
+<li><p>Given a Dirichlet process \( \mathrm{DP}\left(H, \alpha\right) \), where \( H \) (the base distribution or base measure) is an arbitrary distribution and \( \alpha \) (the concentration parameter) is a positive real number, a draw from \( \mathbf{DP} \) will return a random distribution (the output distribution) over some of the values that can be drawn from \( H \).</p></li>
+<li><p>That is, the support of each draw of the output distribution is always a subset of the support of base distribution. </p></li>
+<li><p>The output distribution will be discrete, meaning that individual values drawn from the output distribution will sometimes repeat themselves even if the base distribution is continuous (i.e., if two different draws from the base distribution will be distinct with probability one).</p></li>
+<li><p>The extent to which values will repeat is determined by \( \alpha \), with higher values causing less repetition. </p></li>
+<li><p>Note that the Dirichlet process is a stochastic process, meaning that technically speaking it is an infinite sequence of random variables, rather than a single random distribution.</p></li>
+<li><p>We can call this the <strong>distribution-centered</strong> view of the Dirichlet process. First, draw a random output distribution from this process, and then consider an infinite sequence of random variables representing values drawn from this distribution. Note that, conditioned on the output distribution, the variables are independent identically distributed. Now, consider instead the distribution of the random variables that results from marginalizing out (integrating over) the random output distribution. (This makes all the variables dependent on each other. However, they are still <em>exchangeable</em>, meaning that the marginal distribution of one variable is the same as that of all other variables. That is, they are <em>&ldquo;identically distributed&rdquo; but not &ldquo;independent&rdquo;</em>.) </p></li>
+<li><p>Consider the Dirichlet process as defined above, as a distribution over random distributions, and call this process \( \operatorname{DP}_1() \); The resulting infinite sequence of random variables with the given marginal distributions is another view onto the Dirichlet process, denoted here \( \operatorname{DP}_2() \).</p></li>
+<li><p>The conditional distribution of one variable given all the others, or given all previous variables, is defined by the <a href="https://en.wikipedia.org/wiki/Chinese_restaurant_process">Chinese restaurant process</a>.</p></li>
+<li><p>Another way to think of a Dirichlet process is as an infinite-dimensional generalization of the Dirichlet distribution.</p></li>
+<li><p>a Dirichlet distribution can be thought of as a distribution over \( K \)-dimensional discrete distributions. Imagine generalizing a symmetric Dirichlet distribution, defined by a dimension \( K \) and concentration parameter \( \alpha/K \), to an infinite set of probabilities; the resulting distribution over infinite-dimensional discrete distributions is called the <em>stick-breaking process</em>.</p></li>
+<li><p>Imagine then using this set of probabilities to create an infinite-dimensional mixture model, with each separate probability from the set associated with a mixture component, and the value of each component drawn separately from a base distribution \( H \); then draw an infinite number of samples from this mixture model. The infinite set of random variables corresponding to the marginal distribution of these samples is a Dirichlet process with parameters \( H \) and \( \alpha \).</p></li>
+</ul>
+
+<h3>Application of Dirichlet process</h3>
+
+<ul>
+<li><p>Dirichlet processes are frequently used in Bayesian nonparametric statistics. &ldquo;Nonparametric&rdquo; here does not mean a parameter-less model, rather a model in which representations grow as more data are observed.</p></li>
+<li><p>In a Bayesian nonparametric model, the prior and posterior distributions are not parametric distributions, but stochastic processes<a href="https://en.wikipedia.org/wiki/Dirichlet_process#cite_note-2">1</a>.</p></li>
+<li><p>The fact that the Dirichlet distribution is a probability distribution on the simplex of non-negative numbers that sum to one makes it a good candidate to model distributions of distributions or distributions of functions.</p></li>
+<li><p>Additionally, the non-parametric nature of this model makes it an ideal candidate for clustering problems where the distinct number of clusters is unknown beforehand.</p></li>
+</ul>
+
+<p>-As draws from a Dirichlet process are discrete, an important use is as a prior probability in <a href="https://en.wikipedia.org/wiki/Infinite_mixture_model">infinite mixture models</a>.</p>
+
+<ul>
+<li><p>In this case, S is the parametric set of component distributions. The generative process is therefore that a sample is drawn from a Dirichlet process, and for each data point in turn a value is drawn from this sample distribution and used as the component distribution for that data point.</p></li>
+<li><p>The fact that there is no limit to the number of distinct components which may be generated makes this kind of model appropriate for the case when the number of mixture components is not well-defined in advance. For example, the infinite mixture of Gaussians model.</p></li>
+</ul>
+
+</body>
+
+</html>
+
