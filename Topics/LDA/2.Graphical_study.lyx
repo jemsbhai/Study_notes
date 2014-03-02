@@ -1,0 +1,1473 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\begin_modules
+knitr
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation 0bp
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+section*{Longitudianl Data Analysis}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+subsection*{2.
+ Graphical representation of longitudinal data}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$Y$
+\end_layout
+
+\end_inset
+
+ against 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$Time$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Check the time trend for every individual
+\end_layout
+
+\begin_layout Itemize
+Check the variability change over time (esp.
+ at beginning vs end)
+\end_layout
+
+\begin_layout Standard
+Instead of using 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$Y$
+\end_layout
+
+\end_inset
+
+, use the standardized residuals: 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[y_{iJ}^*=
+\backslash
+frac{y_{iJ}-
+\backslash
+bar{y}_{
+\backslash
+cdot J}}{s_J}
+\backslash
+]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+bar{y}_{
+\backslash
+cdot J}=
+\backslash
+frac{1}{n}
+\backslash
+sum_{i=1}^ny_{iJ}, s_J^2=
+\backslash
+frac{1}{n-1}
+\backslash
+sum_{i=1}^n(y_{iJ}-
+\backslash
+bar{y}_{
+\backslash
+cdot J})^2
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Spaghetti plot
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+ZAP plot
+\series default
+: using residuals
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+regression 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$y_{ij}$
+\end_layout
+
+\end_inset
+
+ on 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$t_{ij}$
+\end_layout
+
+\end_inset
+
+ and get the residuals 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$r_{ij}$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+choose on dimensional summary of the residuals, for example 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$g_i$
+\end_layout
+
+\end_inset
+
+=median
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$(r_{i1},
+\backslash
+cdots,r_{in_i})$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+plot 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$r_{ij}$
+\end_layout
+
+\end_inset
+
+ versus 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$t_{ij}$
+\end_layout
+
+\end_inset
+
+ using points (quantiles of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$g_i$
+\end_layout
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Enumerate
+order units by 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$g_i$
+\end_layout
+
+\end_inset
+
+ (min., 10th, 25th, 50th, 75th, 90th, max.)
+\end_layout
+
+\begin_layout Enumerate
+add lines for selected quantiles of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$g_i$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Enumerate
+
+\series bold
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$Y$
+\end_layout
+
+\end_inset
+
+ against 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$X$
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+AV plot
+\end_layout
+
+\begin_layout Itemize
+Graphic methods to separate CS information from LS information
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+The model 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[y_{ij}=
+\backslash
+beta_Cx_{i1}+
+\backslash
+beta_L(x_{ij}-x_{i1})+
+\backslash
+varepsilon_{ij}, i=1,
+\backslash
+cdot,m; j=1,
+\backslash
+cdots,n
+\backslash
+]
+\end_layout
+
+\end_inset
+
+ suggests making two scatterplots: 
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$y_{i1}$
+\end_layout
+
+\end_inset
+
+ against 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$x_{i1}$
+\end_layout
+
+\end_inset
+
+ for 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$i=1,
+\backslash
+cdots,m$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$y_{ij}-y_{i1}$
+\end_layout
+
+\end_inset
+
+ against 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$x_{ij}-x_{i1}$
+\end_layout
+
+\end_inset
+
+ for 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$i=1,
+\backslash
+cdots,m; j=2,
+\backslash
+cdots, n$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+From the plots, we can then ask:
+\end_layout
+
+\begin_layout Enumerate
+are the differences across subjects? (CS effect)
+\end_layout
+
+\begin_layout Enumerate
+are there changes across time within subject? (LS effect)
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+subsection*{Fitting smotth curves}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[Y_i=
+\backslash
+mu(t_i)+
+\backslash
+varepsilon_i, i=1,
+\backslash
+cdots,m
+\backslash
+]
+\end_layout
+
+\end_inset
+
+ We want to estimate an unknown mean response curve 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu(t)$
+\end_layout
+
+\end_inset
+
+ in the model.
+ Nonparametric regression models that can be used to estimate the mean response
+ profile as a function of time.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Alway, the smaller of the window width the less smothness we get.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+subsubsection*{Kernel estimation}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+selection of window centered at time t;
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+hat{
+\backslash
+mu}(t)$
+\end_layout
+
+\end_inset
+
+ is the average of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$Y$
+\end_layout
+
+\end_inset
+
+ of all points that are visible in that window
+\end_layout
+
+\begin_layout Itemize
+slide a window from the extreme left to extreme right, calculating 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+hat{
+\backslash
+mu}(t_i)$
+\end_layout
+
+\end_inset
+
+ for each.
+\end_layout
+
+\begin_layout Itemize
+a 
+\begin_inset Quotes eld
+\end_inset
+
+better
+\begin_inset Quotes erd
+\end_inset
+
+ method is to use a weight function that changes smoothly with time and
+ gives weights to the observations closer to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$t$
+\end_layout
+
+\end_inset
+
+.
+ E.g.
+ Gaussian kernel 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$K(t_i)=
+\backslash
+exp(-0.5t_i^2)
+\backslash
+ (i.e.
+ N(0,1))$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+at window with 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$t=t_1$
+\end_layout
+
+\end_inset
+
+
+\lang english
+, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+hat{
+\backslash
+mu}(t_1)=
+\backslash
+sum_{i=1}^m
+\backslash
+omega(t_1,t_i,h)y_i/
+\backslash
+sum_{i=1}^m
+\backslash
+omega(t_1,t_i,h)
+\backslash
+]
+\end_layout
+
+\end_inset
+
+ where h controls the smoothness.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+subsubsection*{Smoothing Spline}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Smoothing spline
+\series default
+ (cubic): the function 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$s(t)$
+\end_layout
+
+\end_inset
+
+ that minimizes the criterion 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[J(
+\backslash
+lambda)=
+\backslash
+sum_{i=1}^m
+\backslash
+{y_i-s(t_i)
+\backslash
+}^2+
+\backslash
+lambda
+\backslash
+int s''(t)^2dt
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$s(t)$
+\end_layout
+
+\end_inset
+
+ stisfies the criterion if and only if it is a piecewise cubic polynomial
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+lambda$
+\end_layout
+
+\end_inset
+
+ smaller 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+Rightarrow$
+\end_layout
+
+\end_inset
+
+ curve less smooth
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+int s''(t)^2dt$
+\end_layout
+
+\end_inset
+
+: roughness penalty
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+subsubsection*{Loess}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Center a window at time 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$t_i$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+fit weighted least squares
+\end_layout
+
+\begin_layout Enumerate
+calculate the residuals 
+\end_layout
+
+\begin_layout Enumerate
+down weight the outliers and repeat 1, 2, 3 many times
+\end_layout
+
+\begin_layout Enumerate
+the result is a fitted line that is insensitive to the observations with
+ outlying 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$Y$
+\end_layout
+
+\end_inset
+
+ values
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+subsection*{Exploring correlation structure}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Let 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$y_{ij}=
+\backslash
+beta_0+x_{ij}
+\backslash
+beta+
+\backslash
+varepsilon_{ij}$
+\end_layout
+
+\end_inset
+
+, we should be clear that 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[cor(y_{ij},y_{ik})
+\backslash
+ne cor(
+\backslash
+varepsilon_{ij}),
+\backslash
+varepsilon_{ik}=cor(y_{ij},y_{ik}|x_{ij},x_{ik})
+\backslash
+]
+\end_layout
+
+\end_inset
+
+similarly, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$var(y)
+\backslash
+ne var(
+\backslash
+varepsilon)$
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+We explore the correlation structure based on the 
+\series bold
+residuals
+\series default
+ of the model.
+ And it is used for 
+\series bold
+equally spanced
+\series default
+ data, not for irregular data.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Weakly stationary
+\series default
+: if residuals have constant mean and variance and if 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$corr(y_{ij},y_{ik})$
+\end_layout
+
+\end_inset
+
+ depends only on 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$|t_{ij}-t{ik}|$
+\end_layout
+
+\end_inset
+
+, then the process 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$Y_{ij}$
+\end_layout
+
+\end_inset
+
+ is said to be weakly stationary.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Autocorrelation function (ACF)
+\series default
+: 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+
+\backslash
+[
+\backslash
+rho(u)=corr(Y_{ij},Y_{ij-u})
+\backslash
+]
+\end_layout
+
+\end_inset
+
+for all 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$i$
+\end_layout
+
+\end_inset
+
+, which is pooling observation pairs along the diagonals of the scatterplot
+ matrix.
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[se(
+\backslash
+rho(u))
+\backslash
+approx 1/
+\backslash
+sqrt{N}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+where 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$N$
+\end_layout
+
+\end_inset
+
+ is the number of independent pairs of observations in the calculation.
+\end_layout
+
+\begin_layout Itemize
+ACF is most effective for studying equally spaced data that are roughly
+ stationary.
+\end_layout
+
+\begin_layout Itemize
+For irreguarly-sapced data, we can use 
+\series bold
+Variogram
+\series default
+: 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+gamma(u)=
+\backslash
+frac{1}{2}E
+\backslash
+left[
+\backslash
+{Y(t)-Y(t-u)
+\backslash
+}^2
+\backslash
+right], u
+\backslash
+ge0
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$Y(t)$
+\end_layout
+
+\end_inset
+
+ is 
+\emph on
+stationary
+\emph default
+, the Variogram is directly related to the ACF 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+rho(u)$
+\end_layout
+
+\end_inset
+
+ by 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+gamma(u)=
+\backslash
+sigma^2
+\backslash
+{1-
+\backslash
+rho(u)
+\backslash
+}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+where 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+sigma^2$
+\end_layout
+
+\end_inset
+
+ is the variance of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$Y$
+\end_layout
+
+\end_inset
+
+:
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{eqnarray*}
+\end_layout
+
+\begin_layout Plain Layout
+
+E(X-Y)^2&=&[E(X-Y)]^2+Var(X-Y)
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+&=&0+Var(X)+Var(Y)-2Cov(X,Y)
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+&=&2
+\backslash
+sigma^2-2
+\backslash
+rho
+\backslash
+sigma^2
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+&=&
+\backslash
+sigma^2(1-
+\backslash
+rho)
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{eqnarray*}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Calculating 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+gamma(u)$
+\end_layout
+
+\end_inset
+
+, the Vriagram:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Starting with the 
+\emph on
+residuals
+\emph default
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$r_{ij}$
+\end_layout
+
+\end_inset
+
+ and the time 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$t_{ij}$
+\end_layout
+
+\end_inset
+
+, compute all possible 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[v_{ijk}=
+\backslash
+frac{1}{2}(r_{ij}-r_{ik})^2
+\backslash
+]
+\end_layout
+
+\end_inset
+
+and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[u_{ijk}=t_{ij}-t_{ik}
+\backslash
+mbox{ for } j<k
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Smooth 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$v_{ijk}$
+\end_layout
+
+\end_inset
+
+ against 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$u_{ijk}$
+\end_layout
+
+\end_inset
+
+ (using lowess)
+\end_layout
+
+\begin_layout Enumerate
+Estimate the total variance as 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+hat{
+\backslash
+sigma}^2=
+\backslash
+frac{1}{N-1}
+\backslash
+sum_{ij}(r_{ij}-
+\backslash
+hat{r})
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+If the time 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$t_{ij}$
+\end_layout
+
+\end_inset
+
+ are not total irregular, i.e.
+ there will be more than one observation at each value of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$u$
+\end_layout
+
+\end_inset
+
+.
+ Then let 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+hat{
+\backslash
+gamma}(u)=
+\backslash
+frac{
+\backslash
+sum_{i=1}^{n_i}v_{ijk}}{n_i}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_body
+\end_document

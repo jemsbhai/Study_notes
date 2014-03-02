@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>Longitudianl Data Analysis</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+</head>
+
+<body>
+<h1>Longitudianl Data Analysis</h1>
+
+<h3>Weighted least-squares (WLS) estimation</h3>
+
+<h4>(no distribution assumption on y)</h4>
+
+<p>The <strong>weighted least-squares</strong> estimator of \( \boldsymbol{\beta} \), using a symmetric <em>weight matrix</em>, \( W \), is the value, \( \tilde{\boldsymbol{\beta}}_W \), which minimize the quadratic form
+\[ ({\bf y}-X\boldsymbol{\beta})'W({\bf y}-X\boldsymbol{\beta}). \]</p>
+
+<p>Standard matrix manipulations give the explicit result
+\[ \tilde{\boldsymbol{\beta}}_W=(X'WX)^{-1}X'W{\bf y} \]</p>
+
+<ul>
+<li><p>it&#39;s an unbiased estimator of \( \boldsymbol{\beta} \), whatever the choice of \( W \).</p></li>
+<li><p>\( Var(\tilde{\boldsymbol{\beta}}_W)=\sigma^2\{(X'WX)^{-1}X'W\}V\{WX(X'WX)^{-1}\} \).</p></li>
+</ul>
+
+<ol>
+<li><p>If \( W=I \), it reduces to the OLS estimator \[ \tilde{\boldsymbol{\beta}}_I=(X'X)^{-1}X{\bf y}, \] with \[ Var(\tilde{\boldsymbol{\beta}}_I)=\sigma^2(X'X)^{-1}X'VX(X'X)^{-1}. \]</p></li>
+<li><p>If \( W=V^{-1} \), the estimator becomes the <em>MLE</em> (under the assumption of normal dist.), i.e. \[ \hat{\boldsymbol{\beta}}=(X'V^{-1}X)^{-1}X'V^{-1}{\bf y}, \] with \[ Var(\hat{\boldsymbol{\beta}})=\sigma^2(X'V^{-1}X)^{-1}. \]</p></li>
+</ol>
+
+<ul>
+<li><p>According to the <a href="https://en.wikipedia.org/wiki/Gauss%E2%80%93Markov_theorem">G-M Theorem</a>, the MLE is the most efficient linear estimator for \( \boldsymbol{\beta} \). However, to identify this optimal weighting matrix we need to know the complete correlation structure of the data &ndash; we don&#39;t need to know \( \sigma^2 \), because \( \tilde{\boldsymbol{\beta}}_W \) is unchanged by proportional changes in all the elements of \( W \).</p></li>
+<li><p>Also, because the correlation structure may be diffcult to identify in practice, it is of interest to ask how much loss of efficiency might result from using a different \( W \).</p></li>
+<li><p>When we know the correlation structure is CS (uniform/exchangable), the OLS is fully efficient as the WLS estimator; an intuitive explanation is that with a common correlation between any two equally spaced measurements on the same unit, there is no reason to weight measurements differently.</p></li>
+</ul>
+
+<h4>Using OLS estimator is misleading when \( V\ne I \)</h4>
+
+<ul>
+<li><p>In many circumstances where there is balanced design, the OLS estimator, \( \tilde{\boldsymbol{\beta}} \), is perfectly satisfactory for point estimation. But this is not always the case. (example in book page 63.)</p></li>
+<li><p>Even when OLS is reasonably efficient, it is clear from the form of \[ Var(\tilde{\boldsymbol{\beta}}_I)=\sigma^2(X'X)^{-1}X'VX(X'X)^{-1} \] that interval estimation for \( \boldsymbol{\beta} \) still requires information about \( \sigma^2V \), the variance matrix of the data. In particular, the usual formula for the variance of the least-squares estimator, \[ Var(\tilde{\boldsymbol{\beta}})=\sigma^2(X'X)^{-1} \] assumes that \( V=I \), the identity matrix, and can be seriously misleading when this is not so.</p></li>
+<li><p>A naive use of OLS would be to ignore the correlation structure in the data and to base interval estimation for \( \boldsymbol{\beta} \) on the variance above with \( \sigma^2 \) replaced with its usual estimator, the residual mean square \[ \tilde{\sigma}^2=(nm-p)^{-1}({\bf y}-X\tilde{\boldsymbol{\beta}})'({\bf y}-X\tilde{\boldsymbol{\beta}}). \] There are two sources of error in this naive approach when \( V\ne I \):</p>
+
+<ol>
+<li>\( Var(\tilde{\boldsymbol{\beta}}) \) is wrong</li>
+<li>\( \tilde{\sigma}^2 \) is no longer an unbiased esitmator of \( \sigma^2 \).</li>
+</ol></li>
+</ul>
+
+<h3>MLE under Gaussian assumptions</h3>
+
+<h3>REML</h3>
+
+<h4>(under Gaussian assumptions)</h4>
+
+</body>
+
+</html>
+
