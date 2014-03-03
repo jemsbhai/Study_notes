@@ -1,0 +1,916 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\begin_modules
+knitr
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation 0bp
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+section*{Longitudianl Data Analysis}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+subsection*{3.
+ Linear Models for Correlated Data}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+To develop a general linear model framework for longitudinal data, in which
+ the inference we make about the parameters of interest 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+($
+\backslash
+beta$)
+\end_layout
+
+\end_inset
+
+ 
+\emph on
+recoginze the likely correlation structure of the data
+\emph default
+.
+ There are two ways to archieve this:
+\end_layout
+
+\begin_layout Enumerate
+
+To build explicit parametric models of the covariance struture (e.g.
+ CS/exchangable, AR(1), etc.)
+\end_layout
+
+\begin_layout Enumerate
+
+To use methods of inference which are robust to misspecification of the
+ covariance structure.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+
+The covariance structure is usually the nuisance parameter
+\end_layout
+
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Two categories of robustness: 1.
+ w.r.t.
+ the outliers; 2.
+ w.r.t.
+ model assumptions
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{section}{1}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+subsubsection*{1.
+ Random effect model (conditional model)}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[Y_{ij}=U_i+
+\backslash
+beta_0+
+\backslash
+beta_1t_j+
+\backslash
+varepsilon_{ij}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[U_i
+\backslash
+sim N(0,v^2)
+\backslash
+mbox{, variance between units (clusters)}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+varepsilon_{ij}
+\backslash
+sim N(0,
+\backslash
+tau^2)
+\backslash
+mbox{, variation within units}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+rho=
+\backslash
+frac{v^2}{v^2+
+\backslash
+tau^2}
+\backslash
+mbox{, proportion of total variance due to between units variation}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$var(y_{ij}|U_i)=
+\backslash
+tau^2, cov(y_{ij},y_{ij'}|U_i)=0$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Ex: 
+\emph on
+R.E.
+ (repeated measures) ANOVA
+\emph default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+we can treat the group (condition) variable as the orignial 
+\begin_inset Quotes eld
+\end_inset
+
+time
+\begin_inset Quotes erd
+\end_inset
+
+ variable, i.e.
+ the repeated meaures are observed on different conditions (which cause
+ the groups effect that we are interested in).
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[y_{ij}=
+\backslash
+mu_j+U_i+
+\backslash
+varepsilon_{ij}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+where
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+mu_j,j=1,
+\backslash
+cdots,n 
+\backslash
+mbox{ the group effects}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[U_i
+\backslash
+sim N(0,v^2),
+\backslash
+mbox{ the between subjects random effect}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+varepsilon
+\backslash
+sim N(0,
+\backslash
+tau^2)
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+mbox{Total sum of squares= Between group sum of squares+within group sum
+ of squares}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[cov(y_{ij},y_{i'j'})=
+\backslash
+left
+\backslash
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{array}{ll}
+\end_layout
+
+\begin_layout Plain Layout
+
+var(y_{ij})=
+\backslash
+tau^2+v^2,& 
+\backslash
+mbox{ if } i=i', j=j'
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+cov(y_{ij},y_{ij'})=v^2,&
+\backslash
+mbox{if } i=i', j
+\backslash
+ne j'
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+0
+\backslash
+ ,& 
+\backslash
+mbox{if } i
+\backslash
+ne i', j
+\backslash
+ne j'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{array}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+right.
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[corr(y_{ij},y_{ij'})=
+\backslash
+frac{cov(y_{ij},y_{ij'})}{
+\backslash
+sqrt{var(y_{ij})var(y_{ij'})}}=
+\backslash
+frac{v^2}{
+\backslash
+tau^2+v^2}=
+\backslash
+rho
+\backslash
+mbox{ (within cluster correlation)}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+\emph on
+heteogeneity
+\series default
+\emph default
+: variantion between groups implies (relative) similarity/correlation within
+ gorups.
+ If 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$v^2>>
+\backslash
+tau^2
+\backslash
+Rightarrow$
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+rho
+\backslash
+rightarrow 1
+\backslash
+Rightarrow$
+\end_layout
+
+\end_inset
+
+ significant difference among groups.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+subsubsection*{2.
+ Marginal model (population average)}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+With exchangable (CS) variance-covariance structure (balanced data)
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[Y_{ij}=
+\backslash
+beta_0+
+\backslash
+beta_1t_j+
+\backslash
+varepsilon_{ij}, i=1,/cdots,m; j=1,
+\backslash
+cdots,n
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[Cov(Y_i)=
+\backslash
+sigma^2V_0
+\backslash
+]
+\end_layout
+
+\end_inset
+
+where 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[V_0=
+\backslash
+rho J+(1-
+\backslash
+rho)I
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[
+\backslash
+rho=corr(y_{ij},y_{ik}), 
+\backslash
+mbox{ for } i
+\backslash
+ne k
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+marginal model with CS variance struture is equivalent with random effect
+ (intercept) model: the same 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$E(Y_i)$
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$cov(Y_i)$
+\end_layout
+
+\end_inset
+
+ structures, thus will return the same estimate of the parameters.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Exponential correlation / autoregressive model
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Correlation b/t a pair of measurements of the same subject decays towards
+ 0 as the time separation b/t the measurement increases, i.e.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+for unequally-spaced data
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[cov(y_{ij},y_{ik})=[V_0]_{ij}=v_{ij}=
+\backslash
+sigma^2e^{-
+\backslash
+phi|t_j-t_k|}
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+for equally-spaced data 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[t_{j-1}-t_j=d
+\backslash
+]
+\end_layout
+
+\end_inset
+
+ for all 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$j$
+\end_layout
+
+\end_inset
+
+, then 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$v_{jk}=
+\backslash
+sigma^2
+\backslash
+rho$
+\end_layout
+
+\end_inset
+
+, where 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+rho=
+\backslash
+exp(-
+\backslash
+phi d)$
+\end_layout
+
+\end_inset
+
+ is the correlation b/t successive observations on the same subject.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+In marginal models, we model the mean and the covariance structrue separately:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[E[Y_i]=
+\backslash
+mu=X_i
+\backslash
+beta
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+[Cov[Y_i]=CS/AR(1)/...
+\backslash
+]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+Three basic elements of correlation structure:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Random effects
+\end_layout
+
+\begin_layout Itemize
+Autocorrelation or serial dependence
+\end_layout
+
+\begin_layout Itemize
+Noise, measurement error
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Modelling the correlation in longitudianl data is important to be able to
+ obtain correct inference on 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+beta$s
+\end_layout
+
+\end_inset
+
+.
+ Incorporating correlation into estimation of regression models is achieved
+ via 
+\series bold
+weighted least squares
+\series default
+.
+\end_layout
+
+\end_body
+\end_document
