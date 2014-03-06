@@ -1,0 +1,93 @@
+\documentclass[]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{0}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\section{Longitudianl Data Analysis}\label{longitudianl-data-analysis}
+
+\subsubsection{Cross-sectional v.s. Longitudianl
+study}\label{cross-sectional-v.s.-longitudianl-study}
+
+\textbf{Cross-sectional (CS)} study can be reduced from the longitudinal
+study (LS) if the number of measures per subject is equal to one, ie
+$n_i=1$. \[Y_{i1}=\beta_cx_{i1}+\varepsilon_{i1}, i=1,\cdots, m\]
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  $\beta_c$ represents the diff in average $Y$ across two
+  sub-populations which differ by one unit in $x$.
+\end{itemize}
+
+With repeated measures, above model becomes LDA model:
+\[Y_{ij}=\beta_cx_{i1}+\beta_L(x_{ij}-x_{i1})+\varepsilon_{ij}, i=1,\cdots,m; j=1,\cdots,n_i\]
+
+\begin{itemize}
+\item
+  Notice that $\beta_L$ represents the expected change in $Y$ over time
+  per one unit change in $x$, w.r.t its baseline value:
+  \[(Y_{ij}-Y_{i1})=\beta_L(x_{ij}-x_{i1})+\varepsilon_{ij}-\varepsilon_{i1}\]
+\item
+  When $n=1$, above two models are identical.
+\item
+  It's more common that $\beta_C$ and $\beta_L$ have the same sign.
+  However, it may exist that they have opposite sign.
+\item
+  In CS the basis is a comparison of individuals with a particular value
+  of $x$ to others with a different value
+\item
+  In LDA each person is his/her own control. $\beta_L$ is estimated by
+  comparing a person's response at two times assuming that $x$ changes
+  over time.
+\item
+  Estimation of $\beta_C$ is confouned by unmeasured individual
+  characteristic; while estimation of $\beta_L$ is less likely to be
+  affected by unmeasured confounding. (since, if the confounders are not
+  time-varing, they will be cancelled out when doing model (2)-(1)).
+\end{itemize}
+
+\end{document}

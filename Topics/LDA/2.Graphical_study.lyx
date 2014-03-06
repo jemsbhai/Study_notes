@@ -509,7 +509,7 @@ status open
 
 
 \backslash
-subsection*{Fitting smotth curves}
+subsection*{Fitting smooth curves}
 \end_layout
 
 \end_inset
@@ -673,7 +673,6 @@ exp(-0.5t_i^2)
 \end_layout
 
 \begin_layout Itemize
-
 at window with 
 \begin_inset ERT
 status open
@@ -685,8 +684,6 @@ $t=t_1$
 
 \end_inset
 
-
-\lang english
 , 
 \begin_inset ERT
 status open
@@ -737,6 +734,16 @@ subsubsection*{Smoothing Spline}
 
 \series bold
 Smoothing spline
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+See more in Appendix 2
+\end_layout
+
+\end_inset
+
+
 \series default
  (cubic): the function 
 \begin_inset ERT
@@ -943,9 +950,9 @@ status open
 \backslash
 ne cor(
 \backslash
-varepsilon_{ij}),
+varepsilon_{ij},
 \backslash
-varepsilon_{ik}=cor(y_{ij},y_{ik}|x_{ij},x_{ik})
+varepsilon_{ik})=cor(y_{ij},y_{ik}|x_{ij},x_{ik})
 \backslash
 ]
 \end_layout
@@ -978,7 +985,7 @@ residuals
  of the model.
  And it is used for 
 \series bold
-equally spanced
+equally spaced
 \series default
  data, not for irregular data.
 \end_layout
@@ -1005,7 +1012,7 @@ status open
 
 \begin_layout Plain Layout
 
-$|t_{ij}-t{ik}|$
+$|t_{ij}-t_{ik}|$
 \end_layout
 
 \end_inset
@@ -1035,7 +1042,6 @@ status open
 
 \begin_layout Plain Layout
 
-\series bold
 
 \backslash
 [
@@ -1407,7 +1413,7 @@ frac{1}{N-1}
 \backslash
 sum_{ij}(r_{ij}-
 \backslash
-hat{r})
+bar{r})^2
 \backslash
 ]
 \end_layout

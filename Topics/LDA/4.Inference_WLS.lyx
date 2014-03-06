@@ -1,0 +1,400 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+
+\usepackage{ifxetex}\usepackage{ifluatex}\usepackage{fixltx2e}% provides \textsubscript
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}\usepackage{xltxtra}\usepackage{xunicode}\else
+    \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\ifxetex
+  \else
+  \fi
+
+\urlstyle{same}  % don't use monospace font for urls
+
+
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+
+
+\author{}
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding utf8
+\fontencoding T1
+\font_roman lmodern
+\font_sans default
+\font_typewriter lmodern
+\font_default_family default
+\use_non_tex_fonts true
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks true
+\pdf_pdfborder true
+\pdf_colorlinks true
+\pdf_backref section
+\pdf_pdfusetitle true
+\pdf_quoted_options "setpagesize=false,unicode=false,xetex,citecolor=blue,urlcolor=blue,linkcolor=magenta"
+\papersize default
+\use_geometry false
+\use_amsmath 2
+\use_esint 1
+\use_mhchem 0
+\use_mathdots 0
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 0
+\tocdepth 3
+\paragraph_separation skip
+\defskip 6pt
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Longitudianl Data Analysis
+\end_layout
+
+\begin_layout Subsubsection
+Weighted least-squares (WLS) estimation
+\end_layout
+
+\begin_layout Paragraph
+(no distribution assumption on y)
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+weighted least-squares
+\series default
+ estimator of 
+\begin_inset Formula $\boldsymbol{\beta}$
+\end_inset
+
+, using a symmetric 
+\emph on
+weight matrix
+\emph default
+, 
+\begin_inset Formula $W$
+\end_inset
+
+, is the value, 
+\begin_inset Formula $\tilde{\boldsymbol{\beta}}_{W}$
+\end_inset
+
+, which minimize the quadratic form 
+\begin_inset Formula 
+\[
+({\bf y}-X\boldsymbol{\beta})'W({\bf y}-X\boldsymbol{\beta}).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Standard matrix manipulations give the explicit result 
+\begin_inset Formula 
+\[
+\tilde{\boldsymbol{\beta}}_{W}=(X'WX)^{-1}X'W{\bf y}
+\]
+
+\end_inset
+
+- it's an unbiased estimator of 
+\begin_inset Formula $\boldsymbol{\beta}$
+\end_inset
+
+, whatever the choice of 
+\begin_inset Formula $W$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Var(\tilde{\boldsymbol{\beta}}_{W})=\sigma^{2}\{(X'WX)^{-1}X'W\}V\{WX(X'WX)^{-1}\}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\labelenumi}{\arabic{enumi}.}
+\end_inset
+
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+If 
+\begin_inset Formula $W=I$
+\end_inset
+
+, it reduces to the OLS estimator 
+\begin_inset Formula 
+\[
+\tilde{\boldsymbol{\beta}}_{I}=(X'X)^{-1}X{\bf y},
+\]
+
+\end_inset
+
+with 
+\begin_inset Formula 
+\[
+Var(\tilde{\boldsymbol{\beta}}_{I})=\sigma^{2}(X'X)^{-1}X'VX(X'X)^{-1}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+If 
+\begin_inset Formula $W=V^{-1}$
+\end_inset
+
+, the estimator becomes the 
+\emph on
+MLE
+\emph default
+ (under the assumption of normal dist.), i.e.
+ 
+\begin_inset Formula 
+\[
+\hat{\boldsymbol{\beta}}=(X'V^{-1}X)^{-1}X'V^{-1}{\bf y},
+\]
+
+\end_inset
+
+with 
+\begin_inset Formula 
+\[
+Var(\hat{\boldsymbol{\beta}})=\sigma^{2}(X'V^{-1}X)^{-1}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+According to the [G-M Theorem] (https://en.wikipedia.org/wiki/Gauss--Markov_theore
+m), the MLE is the most efficient linear estimator for 
+\begin_inset Formula $\boldsymbol{\beta}$
+\end_inset
+
+.
+ However, to identify this optimal weighting matrix we need to know the
+ complete correlation structure of the data -- we don't need to know 
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+, because 
+\begin_inset Formula $\tilde{\boldsymbol{\beta}}_{W}$
+\end_inset
+
+ is unchanged by proportional changes in all the elements of 
+\begin_inset Formula $W$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+Also, because the correlation structure may be diffcult to identify in practice,
+ it is of interest to ask how much loss of efficiency might result from
+ using a different 
+\begin_inset Formula $W$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+When we know the correlation structure is CS (uniform/exchangable), the
+ OLS is fully efficient as the WLS estimator; an intuitive explanation is
+ that with a common correlation between any two equally spaced measurements
+ on the same unit, there is no reason to weight measurements differently.
+ 
+\end_layout
+
+\begin_layout Paragraph
+Using OLS estimator is misleading when 
+\begin_inset Formula $V\ne I$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+In many circumstances where there is balanced design, the OLS estimator,
+ 
+\begin_inset Formula $\tilde{\boldsymbol{\beta}}$
+\end_inset
+
+, is perfectly satisfactory for point estimation.
+ But this is not always the case.
+ (example in book page 63.) 
+\end_layout
+
+\begin_layout Itemize
+Even when OLS is reasonably efficient, it is clear from the form of 
+\begin_inset Formula 
+\[
+Var(\tilde{\boldsymbol{\beta}}_{I})=\sigma^{2}(X'X)^{-1}X'VX(X'X)^{-1}
+\]
+
+\end_inset
+
+that interval estimation for 
+\begin_inset Formula $\boldsymbol{\beta}$
+\end_inset
+
+ still requires information about 
+\begin_inset Formula $\sigma^{2}V$
+\end_inset
+
+, the variance matrix of the data.
+ In particular, the usual formula for the variance of the least-squares
+ estimator, 
+\begin_inset Formula 
+\[
+Var(\tilde{\boldsymbol{\beta}})=\sigma^{2}(X'X)^{-1}
+\]
+
+\end_inset
+
+assumes that 
+\begin_inset Formula $V=I$
+\end_inset
+
+, the identity matrix, and can be seriously misleading when this is not
+ so.
+ 
+\end_layout
+
+\begin_layout Itemize
+A naive use of OLS would be to ignore the correlation structure in the data
+ and to base interval estimation for 
+\begin_inset Formula $\boldsymbol{\beta}$
+\end_inset
+
+ on the variance above with 
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+ replaced with its usual estimator, the residual mean square 
+\begin_inset Formula 
+\[
+\tilde{\sigma}^{2}=(nm-p)^{-1}({\bf y}-X\tilde{\boldsymbol{\beta}})'({\bf y}-X\tilde{\boldsymbol{\beta}}).
+\]
+
+\end_inset
+
+There are two sources of error in this naive approach when 
+\begin_inset Formula $V\ne I$
+\end_inset
+
+: 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\labelenumi}{\arabic{enumi}.}
+\end_inset
+
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $Var(\tilde{\boldsymbol{\beta}})$
+\end_inset
+
+ is wrong 
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\tilde{\sigma}^{2}$
+\end_inset
+
+ is no longer an unbiased esitmator of 
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+MLE under Gaussian assumptions
+\end_layout
+
+\begin_layout Subsubsection
+REML
+\end_layout
+
+\begin_layout Paragraph
+(under Gaussian assumptions)
+\end_layout
+
+\end_body
+\end_document

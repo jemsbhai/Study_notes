@@ -97,7 +97,6 @@ subsection*{3.
 \end_layout
 
 \begin_layout Standard
-
 To develop a general linear model framework for longitudinal data, in which
  the inference we make about the parameters of interest 
 \begin_inset ERT
@@ -121,20 +120,17 @@ recoginze the likely correlation structure of the data
 \end_layout
 
 \begin_layout Enumerate
-
 To build explicit parametric models of the covariance struture (e.g.
  CS/exchangable, AR(1), etc.)
 \end_layout
 
 \begin_layout Enumerate
-
 To use methods of inference which are robust to misspecification of the
  covariance structure.
 \begin_inset Foot
 status open
 
 \begin_layout Plain Layout
-
 The covariance structure is usually the nuisance parameter
 \end_layout
 
@@ -158,7 +154,6 @@ Two categories of robustness: 1.
 \end_layout
 
 \begin_layout Standard
-
 \begin_inset ERT
 status open
 
@@ -395,7 +390,7 @@ status open
 \backslash
 [
 \backslash
-varepsilon
+varepsilon_{ij}
 \backslash
 sim N(0,
 \backslash
@@ -622,7 +617,9 @@ beta_0+
 \backslash
 beta_1t_j+
 \backslash
-varepsilon_{ij}, i=1,/cdots,m; j=1,
+varepsilon_{ij}, i=1,
+\backslash
+cdots,m; j=1,
 \backslash
 cdots,n
 \backslash
