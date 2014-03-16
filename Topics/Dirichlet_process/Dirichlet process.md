@@ -31,7 +31,7 @@ $$\left(X\left(B_1\right),\dots,X\left(B_n\right)\right) \sim \mathrm{Dirichlet}
 ### Application of Dirichlet process
 - Dirichlet processes are frequently used in Bayesian nonparametric statistics. "Nonparametric" here does not mean a parameter-less model, rather a model in which representations grow as more data are observed.
 
-- In a Bayesian nonparametric model, the prior and posterior distributions are not parametric distributions, but stochastic processes[1](https://en.wikipedia.org/wiki/Dirichlet_process#cite_note-2).
+- In a Bayesian nonparametric model, the prior and posterior distributions are not parametric distributions, but stochastic processes.[1](https://en.wikipedia.org/wiki/Dirichlet_process#cite_note-2)
 
 - The fact that the Dirichlet distribution is a probability distribution on the simplex of non-negative numbers that sum to one makes it a good candidate to model distributions of distributions or distributions of functions.
 
@@ -41,5 +41,5 @@ $$\left(X\left(B_1\right),\dots,X\left(B_n\right)\right) \sim \mathrm{Dirichlet}
 
 - In this case, S is the parametric set of component distributions. The generative process is therefore that a sample is drawn from a Dirichlet process, and for each data point in turn a value is drawn from this sample distribution and used as the component distribution for that data point.
 
-- The fact that there is no limit to the number of distinct components which may be generated makes this kind of model appropriate for the case when the number of mixture components is not well-defined in advance. For example, the infinite mixture of Gaussians model.
+- The fact that there is no limit to the number of distinct components which may be generated makes this kind of model appropriate for the case when the number of mixture components is not well-defined in advance. For example, the infinite mixture of Gaussians model.[2](https://en.wikipedia.org/wiki/Dirichlet_process#cite_note-3)
 
