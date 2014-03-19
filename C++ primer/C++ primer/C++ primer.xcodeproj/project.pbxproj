@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		778D7EBC18D556910023E4BB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 778D7EBB18D556910023E4BB /* main.cpp */; };
 		778D7EBE18D556910023E4BB /* C___Primer.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 778D7EBD18D556910023E4BB /* C___Primer.1 */; };
+		778D7EC618D5578C0023E4BB /* E1.1.1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 778D7EC418D5578C0023E4BB /* E1.1.1.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,8 @@
 		778D7EB818D556910023E4BB /* C++ Primer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "C++ Primer"; sourceTree = BUILT_PRODUCTS_DIR; };
 		778D7EBB18D556910023E4BB /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		778D7EBD18D556910023E4BB /* C___Primer.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = "C___Primer.1"; sourceTree = "<group>"; };
+		778D7EC418D5578C0023E4BB /* E1.1.1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = E1.1.1.cpp; sourceTree = "<group>"; };
+		778D7EC518D5578C0023E4BB /* E1.1.1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = E1.1.1.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +64,8 @@
 			isa = PBXGroup;
 			children = (
 				778D7EBB18D556910023E4BB /* main.cpp */,
+				778D7EC418D5578C0023E4BB /* E1.1.1.cpp */,
+				778D7EC518D5578C0023E4BB /* E1.1.1.h */,
 				778D7EBD18D556910023E4BB /* C___Primer.1 */,
 			);
 			path = "C++ Primer";
@@ -118,6 +123,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				778D7EBC18D556910023E4BB /* main.cpp in Sources */,
+				778D7EC618D5578C0023E4BB /* E1.1.1.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,6 +233,7 @@
 				778D7EC318D556910023E4BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

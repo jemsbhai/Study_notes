@@ -7,3 +7,10 @@
 //
 
 #include "E1.1.1.h"
+#include <iostream>
+char hello()
+{
+    std::cout << "Hello, World" << std::endl;
+    return 0;
+    
+}
